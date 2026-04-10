@@ -250,6 +250,11 @@ class DownloadManager:
                 await asyncio.sleep(0.5)
                 task.status = DownloadStatus.COMPLETED
                 task.progress = 100.0
+
+                # Авто-очистка: ждём 2 секунды чтобы пользователь увидел статус, затем удаляем
+                if settings.auto_clear_queue:
+                    await asyncio.sleep(2)
+                    self.tasks.pop(task.id, None)
             else:
                 stderr_output = ""
                 if task.process.stderr:

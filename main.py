@@ -80,25 +80,26 @@ async def broadcast_progress():
     """Периодически отправляет прогресс всех активных загрузок."""
     while True:
         tasks = download_manager.get_all_tasks()
-        if tasks:
-            data = {
-                "type": "progress_update",
-                "tasks": [t.to_dict() for t in tasks],
-                "active_count": download_manager.get_active_count(),
-            }
-            await manager.broadcast(data)
 
-            # Отправляем уведомления о несовпадении формата
-            for task in tasks:
-                if task.format_warning and task.id not in sent_notifications:
-                    sent_notifications.add(task.id)
-                    notification = {
-                        "type": "notification",
-                        "task_id": task.id,
-                        "message": task.format_warning,
-                        "title": task.title,
-                    }
-                    await manager.broadcast(notification)
+        # Всегда отправляем обновление, даже если очередь пуста
+        data = {
+            "type": "progress_update",
+            "tasks": [t.to_dict() for t in tasks],
+            "active_count": download_manager.get_active_count(),
+        }
+        await manager.broadcast(data)
+
+        # Отправляем уведомления о несовпадении формата
+        for task in tasks:
+            if task.format_warning and task.id not in sent_notifications:
+                sent_notifications.add(task.id)
+                notification = {
+                    "type": "notification",
+                    "task_id": task.id,
+                    "message": task.format_warning,
+                    "title": task.title,
+                }
+                await manager.broadcast(notification)
         await asyncio.sleep(0.5)
 
 
