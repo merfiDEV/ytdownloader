@@ -37,6 +37,7 @@ class DownloadTask:
         self.error_message = ""
         self.format_warning = ""
         self.thumbnail = ""
+        self.resumed = False
         self.process: Optional[asyncio.subprocess.Process] = None
 
     def to_dict(self) -> dict:
@@ -53,6 +54,7 @@ class DownloadTask:
             "error_message": self.error_message,
             "format_warning": self.format_warning,
             "thumbnail": self.thumbnail,
+            "resumed": self.resumed,
         }
 
 
@@ -148,6 +150,7 @@ class DownloadManager:
             str(self.ytdlp_path),
             "--newline",
             "--no-colors",
+            "--continue",  # Поддержка докачки с места паузы
             "-f", format_str,
             "-o", output_template,
             "--progress-template", "%(progress.downloaded_bytes)s %(progress.total_bytes)s %(progress.percentage)s %(progress.speed)s %(progress.eta)s",
@@ -278,10 +281,16 @@ class DownloadManager:
             task.error_message = str(e)[:200]
 
     def pause_download(self, task_id: str) -> Optional[DownloadTask]:
-        """Приостановить загрузку."""
+        """Приостановить загрузку — сразу убиваем процесс."""
         task = self.tasks.get(task_id)
         if task and task.status == DownloadStatus.DOWNLOADING:
             task.status = DownloadStatus.PAUSED
+            # Сразу убиваем процесс yt-dlp
+            if task.process:
+                try:
+                    task.process.kill()
+                except Exception:
+                    pass
         return task
 
     async def resume_download(self, task_id: str) -> Optional[DownloadTask]:
@@ -290,6 +299,13 @@ class DownloadManager:
         if task and task.status == DownloadStatus.PAUSED:
             settings = load_settings()
             task.status = DownloadStatus.DOWNLOADING
+            # Сбрасываем прогресс для корректного отображения докачки
+            task.downloaded_bytes = 0
+            task.total_bytes = 0
+            task.progress = 0.0
+            task.speed = ""
+            task.eta = ""
+            task.resumed = True
             asyncio.create_task(self._run_download(task, settings))
         return task
 

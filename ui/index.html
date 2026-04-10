@@ -362,7 +362,7 @@ downloadBtn.addEventListener('click', async () => {
 
         const data = await response.json();
 
-        if (data.entries && data.entries.length > 0) {
+        if (data.entries && data.entries.length > 1) {
             // Это плейлист — открываем диалог
             currentPlaylistUrl = url;
             playlistEntries = data.entries;

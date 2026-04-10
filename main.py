@@ -46,6 +46,7 @@ class TaskResponse(BaseModel):
     eta: str
     error_message: str
     thumbnail: str = ""
+    resumed: bool = False
 
 
 # --- WebSocket для real-time обновлений ---
