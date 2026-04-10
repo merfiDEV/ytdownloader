@@ -146,7 +146,11 @@ class DownloadManager:
         if settings.download_format.lower() == "mp3":
             format_str = "bestaudio"
 
-        output_template = str(Path(settings.save_location) / "%(title)s.%(ext)s")
+        if settings.random_filename:
+            # Используем случайное имя (8 символов) + расширение
+            output_template = str(Path(settings.save_location) / f"{uuid.uuid4().hex[:8]}.%(ext)s")
+        else:
+            output_template = str(Path(settings.save_location) / "%(title)s.%(ext)s")
 
         cmd = [
             str(self.ytdlp_path),

@@ -14,6 +14,7 @@ class Settings(BaseModel):
     dark_theme: bool = False
     wifi_only: bool = False
     auto_clear_queue: bool = False
+    random_filename: bool = False
 
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"

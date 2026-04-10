@@ -340,6 +340,23 @@ tailwind.config = {
                     <span class="material-symbols-outlined">edit</span>
                 </button>
             </div>
+
+            <!-- Random Filename Toggle -->
+            <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-primary-container/10 rounded-xl">
+                        <span class="material-symbols-outlined text-primary">casino</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-on-surface">Случайное имя файла</p>
+                        <p class="text-sm text-on-surface-variant">Вместо оригинального названия видео</p>
+                    </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input id="random-filename-toggle" type="checkbox" class="sr-only peer">
+                    <div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+            </div>
         </div>
     </div>
 
@@ -574,6 +591,7 @@ function applySettings(settings) {
     document.getElementById('dark-theme-toggle').checked = settings.dark_theme;
     document.getElementById('wifi-only-toggle').checked = settings.wifi_only;
     document.getElementById('auto-clear-toggle').checked = settings.auto_clear_queue;
+    document.getElementById('random-filename-toggle').checked = settings.random_filename;
 
     // Применяем тёмную тему
     if (settings.dark_theme) {
@@ -597,7 +615,8 @@ document.getElementById('save-btn').addEventListener('click', async () => {
         save_location: currentSettings.save_location,
         dark_theme: document.getElementById('dark-theme-toggle').checked,
         wifi_only: document.getElementById('wifi-only-toggle').checked,
-        auto_clear_queue: document.getElementById('auto-clear-toggle').checked
+        auto_clear_queue: document.getElementById('auto-clear-toggle').checked,
+        random_filename: document.getElementById('random-filename-toggle').checked
     };
 
     try {
