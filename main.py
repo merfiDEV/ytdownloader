@@ -67,6 +67,9 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# Хранилище отправленных уведомлений (чтобы не спамить)
+sent_notifications: set[str] = set()
+
 
 async def broadcast_progress():
     """Периодически отправляет прогресс всех активных загрузок."""
@@ -79,6 +82,18 @@ async def broadcast_progress():
                 "active_count": download_manager.get_active_count(),
             }
             await manager.broadcast(data)
+
+            # Отправляем уведомления о несовпадении формата
+            for task in tasks:
+                if task.format_warning and task.id not in sent_notifications:
+                    sent_notifications.add(task.id)
+                    notification = {
+                        "type": "notification",
+                        "task_id": task.id,
+                        "message": task.format_warning,
+                        "title": task.title,
+                    }
+                    await manager.broadcast(notification)
         await asyncio.sleep(0.5)
 
 
@@ -147,6 +162,7 @@ async def remove_download(task_id: str):
     """Удалить задачу из очереди."""
     success = download_manager.remove_task(task_id)
     if success:
+        sent_notifications.discard(task_id)
         return {"status": "removed"}
     return {"error": "Task not found"}
 

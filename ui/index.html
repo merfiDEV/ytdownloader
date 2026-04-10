@@ -201,6 +201,16 @@ tailwind.config = {
 .dark .signature-gradient {
     background: linear-gradient(135deg, #bc0100 0%, #eb0000 100%);
 }
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slideOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(16px) scale(0.95); }
+}
+.animate-slide-in { animation: slideIn 0.3s ease-out; }
+.animate-slide-out { animation: slideOut 0.3s ease-in; }
 </style>
 </head>
 <body class="bg-background font-body text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
@@ -221,6 +231,9 @@ tailwind.config = {
         </button>
     </div>
 </header>
+
+<!-- Toast Notifications -->
+<div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-3 max-w-sm"></div>
 
 <!-- Main Content -->
 <main class="flex-1 flex items-center justify-center px-6 py-12">
@@ -273,6 +286,8 @@ function connectWebSocket() {
         if (data.type === 'progress_update') {
             renderDownloads(data.tasks);
             activeCount.textContent = `${data.active_count} items`;
+        } else if (data.type === 'notification') {
+            showToast(data.message, data.title);
         }
     };
     
@@ -411,6 +426,37 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Toast уведомления
+function showToast(message, title = '') {
+    const container = document.getElementById('toast-container');
+
+    const toast = document.createElement('div');
+    toast.className = 'bg-surface-container-low border border-outline-variant rounded-xl p-4 shadow-lg flex flex-col gap-2 animate-slide-in';
+
+    const titleHtml = title ? `<p class="text-sm font-semibold text-on-surface truncate">${escapeHtml(title)}</p>` : '';
+
+    toast.innerHTML = `
+        <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-amber-500 text-[22px] shrink-0 mt-0.5">warning</span>
+            <div class="flex-1 min-w-0">
+                ${titleHtml}
+                <p class="text-sm text-on-surface-variant">${escapeHtml(message)}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-on-surface-variant hover:text-on-surface shrink-0">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    // Автоматическое удаление через 5 секунд
+    setTimeout(() => {
+        toast.classList.add('animate-slide-out');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
 }
 
 // Действия с загрузками

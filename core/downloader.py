@@ -35,6 +35,7 @@ class DownloadTask:
         self.speed = ""
         self.eta = ""
         self.error_message = ""
+        self.format_warning = ""
         self.process: Optional[asyncio.subprocess.Process] = None
 
     def to_dict(self) -> dict:
@@ -49,6 +50,7 @@ class DownloadTask:
             "speed": self.speed,
             "eta": self.eta,
             "error_message": self.error_message,
+            "format_warning": self.format_warning,
         }
 
 
@@ -120,6 +122,14 @@ class DownloadManager:
                 try:
                     info = json.loads(stdout.decode("utf-8"))
                     task.title = info.get("title", task.url)
+
+                    # Проверяем реальный формат видео
+                    actual_ext = info.get("ext", "").lower()
+                    desired_format = settings.download_format.lower()
+
+                    # Формат не совпадает с желаемым (не для mp3, так как mp3 конвертируется)
+                    if desired_format != "mp3" and actual_ext and actual_ext != desired_format:
+                        task.format_warning = f"Формат {actual_ext.upper()} вместо {desired_format.upper()}"
                 except (json.JSONDecodeError, UnicodeDecodeError):
                     task.title = task.url
             else:
