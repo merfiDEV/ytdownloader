@@ -10,6 +10,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
+import psutil
+
 from core.config import Settings, load_settings
 
 
@@ -205,11 +207,12 @@ class DownloadManager:
 
             # Парсим прогресс
             while True:
+                # Если задача на паузе, мы просто ждем. 
+                # Благодаря psutil.suspend(), процесс yt-dlp замрет,
+                # и readline() ниже просто перестанет возвращать данные до возобновления.
                 if task.status == DownloadStatus.PAUSED:
-                    if task.process:
-                        task.process.kill()
-                        await task.process.wait()
-                    return
+                    await asyncio.sleep(1)
+                    continue
 
                 line = await task.process.stdout.readline()
                 if not line:
@@ -280,42 +283,65 @@ class DownloadManager:
             task.status = DownloadStatus.ERROR
             task.error_message = str(e)[:200]
 
+    def _manage_process_tree(self, pid: int, action: str) -> None:
+        """Рекурсивно управляет деревом процессов."""
+        try:
+            parent = psutil.Process(pid)
+            children = parent.children(recursive=True)
+            processes = children + [parent]
+            
+            for p in processes:
+                try:
+                    if action == "suspend":
+                        p.suspend()
+                    elif action == "resume":
+                        p.resume()
+                    elif action == "kill":
+                        p.kill()
+                    elif action == "terminate":
+                        p.terminate()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+
     def pause_download(self, task_id: str) -> Optional[DownloadTask]:
-        """Приостановить загрузку — сразу убиваем процесс."""
+        """Приостановить загрузку — приостанавливаем дерево процессов."""
         task = self.tasks.get(task_id)
         if task and task.status == DownloadStatus.DOWNLOADING:
             task.status = DownloadStatus.PAUSED
-            # Сразу убиваем процесс yt-dlp
-            if task.process:
-                try:
-                    task.process.kill()
-                except Exception:
-                    pass
+            if task.process and task.process.returncode is None:
+                self._manage_process_tree(task.process.pid, "suspend")
         return task
 
     async def resume_download(self, task_id: str) -> Optional[DownloadTask]:
         """Возобновить загрузку."""
         task = self.tasks.get(task_id)
         if task and task.status == DownloadStatus.PAUSED:
-            settings = load_settings()
-            task.status = DownloadStatus.DOWNLOADING
-            # Сбрасываем прогресс для корректного отображения докачки
-            task.downloaded_bytes = 0
-            task.total_bytes = 0
-            task.progress = 0.0
-            task.speed = ""
-            task.eta = ""
-            task.resumed = True
-            asyncio.create_task(self._run_download(task, settings))
+            # Проверяем, жив ли еще процесс
+            if task.process and task.process.returncode is None:
+                task.status = DownloadStatus.DOWNLOADING
+                self._manage_process_tree(task.process.pid, "resume")
+            else:
+                # Если процесс умер, перезапускаем как раньше
+                settings = load_settings()
+                task.status = DownloadStatus.DOWNLOADING
+                task.downloaded_bytes = 0
+                task.total_bytes = 0
+                task.progress = 0.0
+                task.speed = ""
+                task.eta = ""
+                task.resumed = True
+                asyncio.create_task(self._run_download(task, settings))
         return task
 
     def cancel_download(self, task_id: str) -> Optional[DownloadTask]:
         """Отменить загрузку."""
         task = self.tasks.get(task_id)
         if task:
-            if task.status in (DownloadStatus.DOWNLOADING, DownloadStatus.PROCESSING):
-                if task.process:
-                    task.process.kill()
+            if task.status in (DownloadStatus.DOWNLOADING, DownloadStatus.PROCESSING, DownloadStatus.PAUSED):
+                if task.process and task.process.returncode is None:
+                    self._manage_process_tree(task.process.pid, "kill")
             task.status = DownloadStatus.ERROR
             task.error_message = "Cancelled by user"
         return task
@@ -332,8 +358,9 @@ class DownloadManager:
         """Удалить задачу из очереди."""
         if task_id in self.tasks:
             task = self.tasks[task_id]
-            if task.status == DownloadStatus.DOWNLOADING and task.process:
-                task.process.kill()
+            if task.status in (DownloadStatus.DOWNLOADING, DownloadStatus.PAUSED) and task.process:
+                if task.process.returncode is None:
+                    self._manage_process_tree(task.process.pid, "kill")
             del self.tasks[task_id]
             return True
         return False
