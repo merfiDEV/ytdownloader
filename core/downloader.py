@@ -106,10 +106,10 @@ class DownloadManager:
         cmd.append(task.url)
 
         try:
-            # Получаем заголовок видео перед загрузкой
+            # Получаем заголовок видео через JSON-вывод (всегда UTF-8)
             title_proc = await asyncio.create_subprocess_exec(
                 str(self.ytdlp_path),
-                "--get-title",
+                "-j",  # JSON output
                 "--no-playlist",
                 task.url,
                 stdout=asyncio.subprocess.PIPE,
@@ -117,7 +117,11 @@ class DownloadManager:
             )
             stdout, _ = await title_proc.communicate()
             if title_proc.returncode == 0:
-                task.title = stdout.decode("utf-8", errors="replace").strip()
+                try:
+                    info = json.loads(stdout.decode("utf-8"))
+                    task.title = info.get("title", task.url)
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    task.title = task.url
             else:
                 task.title = task.url
 
