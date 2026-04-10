@@ -548,6 +548,9 @@ function renderDownloads(tasks) {
                                 <span class="material-symbols-outlined text-[20px]">close</span>
                             </button>
                         ` : `
+                            <button onclick="openFolder('${task.id}')" class="text-on-secondary-container hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="Открыть папку">
+                                <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                            </button>
                             <button onclick="removeTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Удалить">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
@@ -693,6 +696,10 @@ window.cancelTask = async function(id) {
     } catch (err) {
         console.error('Ошибка обновления списка:', err);
     }
+}
+
+window.openFolder = async function(id) {
+    await fetch(`${API_URL}/api/open-folder/${id}`, { method: 'POST' });
 }
 
 // Инициализация

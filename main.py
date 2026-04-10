@@ -2,7 +2,9 @@
 
 import asyncio
 import json
+import os
 import shutil
+import subprocess
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -199,6 +201,23 @@ async def remove_download(task_id: str):
         sent_notifications.discard(task_id)
         return {"status": "removed"}
     return {"error": "Task not found"}
+
+
+@app.post("/api/open-folder/{task_id}")
+async def open_folder(task_id: str):
+    """Открыть папку с загруженным файлом в проводнике."""
+    settings = load_settings()
+    save_path = Path(settings.save_location)
+
+    if not save_path.exists():
+        return {"error": "Папка сохранения не найдена"}
+
+    # Открываем папку в проводнике Windows
+    try:
+        os.startfile(str(save_path))
+        return {"status": "opened"}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/api/downloads", response_model=list[TaskResponse])
