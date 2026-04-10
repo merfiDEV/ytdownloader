@@ -23,6 +23,11 @@ class DownloadRequest(BaseModel):
     url: str
 
 
+class PlaylistDownloadRequest(BaseModel):
+    url: str
+    selected_indices: list[int]
+
+
 class SettingsRequest(BaseModel):
     settings: Settings
 
@@ -128,6 +133,33 @@ async def start_download(request: DownloadRequest):
     """Начать загрузку видео по URL."""
     task = await download_manager.add_download(request.url)
     return TaskResponse(**task.to_dict())
+
+
+@app.post("/api/playlist/info")
+async def get_playlist_info(request: DownloadRequest):
+    """Получить информацию о плейлисте."""
+    info = await download_manager.get_playlist_info(request.url)
+    if "error" in info:
+        return {"error": info["error"]}
+    return info
+
+
+@app.post("/api/playlist/download")
+async def download_playlist(request: PlaylistDownloadRequest):
+    """Скачать выбранные видео из плейлиста."""
+    # Получаем информацию о плейлисте
+    info = await download_manager.get_playlist_info(request.url)
+    if "error" in info or "entries" not in info:
+        return {"error": "Не удалось получить информацию о плейлисте"}
+
+    # Создаём задачи для выбранных видео
+    created_tasks = []
+    for entry in info["entries"]:
+        if entry["index"] in request.selected_indices:
+            task = await download_manager.add_download(entry["url"])
+            created_tasks.append(task.to_dict())
+
+    return {"tasks": created_tasks, "count": len(created_tasks)}
 
 
 @app.post("/api/download/{task_id}/pause")

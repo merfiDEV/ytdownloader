@@ -61,6 +61,55 @@ class DownloadManager:
         self.tasks: dict[str, DownloadTask] = {}
         self.ytdlp_path = Path(__file__).parent.parent / "yt-dlp.exe"
 
+    async def get_playlist_info(self, url: str) -> dict:
+        """Получить информацию о плейлисте."""
+        if not self.ytdlp_path.exists():
+            return {"error": "yt-dlp.exe not found"}
+
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                str(self.ytdlp_path),
+                "-j",
+                "--flat-playlist",
+                url,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+
+            if proc.returncode != 0:
+                return {"error": stderr.decode("utf-8", errors="replace")[:200]}
+
+            lines = stdout.decode("utf-8", errors="replace").strip().split("\n")
+            entries = []
+            playlist_title = ""
+
+            for line in lines:
+                if not line.strip():
+                    continue
+                try:
+                    info = json.loads(line)
+                    if info.get("_type") == "playlist":
+                        playlist_title = info.get("title", "Плейлист")
+                    elif info.get("url") or info.get("id"):
+                        video_id = info.get("id", "")
+                        entries.append({
+                            "id": video_id,
+                            "url": info.get("url", f"https://www.youtube.com/watch?v={video_id}"),
+                            "title": info.get("title", f"Видео #{len(entries) + 1}"),
+                            "thumbnail": f"https://i.ytimg.com/vi/{video_id}/mqdefault.jpg",
+                            "index": len(entries) + 1,
+                        })
+                except json.JSONDecodeError:
+                    continue
+
+            return {
+                "title": playlist_title or "Плейлист",
+                "entries": entries,
+            }
+        except Exception as e:
+            return {"error": str(e)[:200]}
+
     async def add_download(self, url: str) -> DownloadTask:
         """Добавить новую задачу загрузки."""
         settings = load_settings()

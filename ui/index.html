@@ -235,6 +235,46 @@ tailwind.config = {
 <!-- Toast Notifications -->
 <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-3 max-w-sm"></div>
 
+<!-- Playlist Dialog -->
+<div id="playlist-dialog" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-6">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-slide-in">
+        <!-- Dialog Header -->
+        <div class="flex items-center justify-between p-6 border-b border-outline-variant">
+            <div>
+                <h2 id="playlist-title" class="text-xl font-headline font-bold text-on-surface">Плейлист</h2>
+                <p id="playlist-count" class="text-sm text-on-surface-variant mt-1">0 видео</p>
+            </div>
+            <button id="playlist-close" class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Dialog Body -->
+        <div class="flex-1 overflow-y-auto p-4">
+            <!-- Select All / Deselect All -->
+            <div class="flex gap-3 mb-4 px-2">
+                <button id="select-all-btn" class="text-sm text-primary hover:text-primary-container font-semibold transition-colors">
+                    Выбрать все
+                </button>
+                <button id="deselect-all-btn" class="text-sm text-on-surface-variant hover:text-on-surface font-semibold transition-colors">
+                    Снять все
+                </button>
+            </div>
+            <!-- Video List -->
+            <div id="playlist-videos" class="space-y-2">
+                <!-- Видео будут добавлены динамически -->
+            </div>
+        </div>
+
+        <!-- Dialog Footer -->
+        <div class="p-6 border-t border-outline-variant flex justify-end">
+            <button id="playlist-download-btn" class="signature-gradient text-on-primary px-8 py-3 rounded-full font-headline font-bold hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                Скачать (0)
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Main Content -->
 <main class="flex-1 flex items-center justify-center px-6 py-12">
     <div class="w-full max-w-3xl flex flex-col gap-12">
@@ -297,28 +337,168 @@ function connectWebSocket() {
 }
 
 // Загрузка видео
+let currentPlaylistUrl = '';
+let playlistEntries = [];
+let selectedIndices = new Set();
+
 downloadBtn.addEventListener('click', async () => {
     const url = urlInput.value.trim();
     if (!url) return;
-    
+
     downloadBtn.disabled = true;
-    downloadBtn.textContent = 'Загрузка...';
-    
+    downloadBtn.textContent = 'Проверка...';
+
+    try {
+        // Проверяем, является ли URL плейлистом
+        const response = await fetch(`${API_URL}/api/playlist/info`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+        });
+
+        const data = await response.json();
+
+        if (data.entries && data.entries.length > 0) {
+            // Это плейлист — открываем диалог
+            currentPlaylistUrl = url;
+            playlistEntries = data.entries;
+            selectedIndices = new Set();
+            showPlaylistDialog(data);
+        } else if (data.error) {
+            // Ошибка или не плейлист — скачиваем как обычное видео
+            await startDownload(url);
+        } else {
+            // Не плейлист — скачиваем как обычное видео
+            await startDownload(url);
+        }
+    } catch (err) {
+        console.error('Ошибка при проверке URL:', err);
+        // На всякий случай пытаемся скачать как видео
+        await startDownload(url);
+    } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = 'Скачать';
+    }
+});
+
+async function startDownload(url) {
     try {
         const response = await fetch(`${API_URL}/api/download`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ url })
         });
-        
+
         if (response.ok) {
             urlInput.value = '';
         }
     } catch (err) {
         console.error('Ошибка при загрузке:', err);
+    }
+}
+
+// Playlist Dialog
+function showPlaylistDialog(data) {
+    const dialog = document.getElementById('playlist-dialog');
+    const title = document.getElementById('playlist-title');
+    const count = document.getElementById('playlist-count');
+    const videosContainer = document.getElementById('playlist-videos');
+    const downloadBtn = document.getElementById('playlist-download-btn');
+
+    title.textContent = data.title;
+    count.textContent = `${data.entries.length} видео`;
+
+    renderPlaylistVideos(data.entries);
+    updateDownloadButton();
+
+    dialog.classList.remove('hidden');
+    dialog.classList.add('flex');
+}
+
+function renderPlaylistVideos(entries) {
+    const container = document.getElementById('playlist-videos');
+
+    container.innerHTML = entries.map(entry => `
+        <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors group">
+            <input type="checkbox" class="playlist-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-2 bg-surface-container-high shrink-0" data-index="${entry.index}" onchange="toggleVideoSelection(${entry.index}, this.checked)">
+            <img src="${entry.thumbnail}" alt="" class="w-16 h-12 object-cover rounded-lg bg-surface-container-high shrink-0" loading="lazy" onerror="this.style.display='none'">
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-on-surface truncate">${escapeHtml(entry.title)}</p>
+                <p class="text-xs text-on-surface-variant">Видео #${entry.index}</p>
+            </div>
+            <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity text-[20px] shrink-0">play_circle</span>
+        </label>
+    `).join('');
+}
+
+window.toggleVideoSelection = function(index, checked) {
+    if (checked) {
+        selectedIndices.add(index);
+    } else {
+        selectedIndices.delete(index);
+    }
+    updateDownloadButton();
+}
+
+function updateDownloadButton() {
+    const btn = document.getElementById('playlist-download-btn');
+    btn.textContent = `Скачать (${selectedIndices.size})`;
+    btn.disabled = selectedIndices.size === 0;
+}
+
+// Закрытие диалога
+document.getElementById('playlist-close').addEventListener('click', closePlaylistDialog);
+document.getElementById('playlist-dialog').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closePlaylistDialog();
+});
+
+function closePlaylistDialog() {
+    const dialog = document.getElementById('playlist-dialog');
+    dialog.classList.add('hidden');
+    dialog.classList.remove('flex');
+    currentPlaylistUrl = '';
+    playlistEntries = [];
+    selectedIndices = new Set();
+}
+
+// Выбрать все
+document.getElementById('select-all-btn').addEventListener('click', () => {
+    playlistEntries.forEach(entry => selectedIndices.add(entry.index));
+    document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = true);
+    updateDownloadButton();
+});
+
+// Снять все
+document.getElementById('deselect-all-btn').addEventListener('click', () => {
+    selectedIndices.clear();
+    document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = false);
+    updateDownloadButton();
+});
+
+// Скачать выбранные
+document.getElementById('playlist-download-btn').addEventListener('click', async () => {
+    if (selectedIndices.size === 0) return;
+
+    const btn = document.getElementById('playlist-download-btn');
+    btn.disabled = true;
+    btn.textContent = 'Добавление...';
+
+    try {
+        const response = await fetch(`${API_URL}/api/playlist/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: currentPlaylistUrl, selected_indices: Array.from(selectedIndices) })
+        });
+
+        if (response.ok) {
+            urlInput.value = '';
+            closePlaylistDialog();
+        }
+    } catch (err) {
+        console.error('Ошибка при загрузке плейлиста:', err);
     } finally {
-        downloadBtn.disabled = false;
-        downloadBtn.textContent = 'Скачать';
+        btn.disabled = false;
+        btn.textContent = `Скачать (${selectedIndices.size})`;
     }
 });
 
