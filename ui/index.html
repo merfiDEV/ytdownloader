@@ -414,20 +414,52 @@ function escapeHtml(text) {
 }
 
 // Действия с загрузками
+window.removeTask = async function(id) {
+    await fetch(`${API_URL}/api/download/${id}`, { method: 'DELETE' });
+    // Обновить список после удаления
+    try {
+        const response = await fetch(`${API_URL}/api/downloads`);
+        const tasks = await response.json();
+        renderDownloads(tasks);
+    } catch (err) {
+        console.error('Ошибка обновления списка:', err);
+    }
+}
+
 window.pauseTask = async function(id) {
     await fetch(`${API_URL}/api/download/${id}/pause`, { method: 'POST' });
+    // Обновить список после паузы
+    try {
+        const response = await fetch(`${API_URL}/api/downloads`);
+        const tasks = await response.json();
+        renderDownloads(tasks);
+    } catch (err) {
+        console.error('Ошибка обновления списка:', err);
+    }
 }
 
 window.resumeTask = async function(id) {
     await fetch(`${API_URL}/api/download/${id}/resume`, { method: 'POST' });
+    // Обновить список после возобновления
+    try {
+        const response = await fetch(`${API_URL}/api/downloads`);
+        const tasks = await response.json();
+        renderDownloads(tasks);
+    } catch (err) {
+        console.error('Ошибка обновления списка:', err);
+    }
 }
 
 window.cancelTask = async function(id) {
     await fetch(`${API_URL}/api/download/${id}/cancel`, { method: 'POST' });
-}
-
-window.removeTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}`, { method: 'DELETE' });
+    // Обновить список после отмены
+    try {
+        const response = await fetch(`${API_URL}/api/downloads`);
+        const tasks = await response.json();
+        renderDownloads(tasks);
+    } catch (err) {
+        console.error('Ошибка обновления списка:', err);
+    }
 }
 
 // Инициализация
