@@ -43,6 +43,7 @@ class TaskResponse(BaseModel):
     speed: str
     eta: str
     error_message: str
+    thumbnail: str = ""
 
 
 # --- WebSocket для real-time обновлений ---

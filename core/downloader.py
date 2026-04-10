@@ -36,6 +36,7 @@ class DownloadTask:
         self.eta = ""
         self.error_message = ""
         self.format_warning = ""
+        self.thumbnail = ""
         self.process: Optional[asyncio.subprocess.Process] = None
 
     def to_dict(self) -> dict:
@@ -51,6 +52,7 @@ class DownloadTask:
             "eta": self.eta,
             "error_message": self.error_message,
             "format_warning": self.format_warning,
+            "thumbnail": self.thumbnail,
         }
 
 
@@ -171,6 +173,14 @@ class DownloadManager:
                 try:
                     info = json.loads(stdout.decode("utf-8"))
                     task.title = info.get("title", task.url)
+
+                    # Получаем превью
+                    task.thumbnail = info.get("thumbnail", "")
+                    # Если thumbnail нет, формируем из video_id
+                    if not task.thumbnail:
+                        video_id = info.get("id", "")
+                        if video_id:
+                            task.thumbnail = f"https://i.ytimg.com/vi/{video_id}/mqdefault.jpg"
 
                     # Проверяем реальный формат видео
                     actual_ext = info.get("ext", "").lower()

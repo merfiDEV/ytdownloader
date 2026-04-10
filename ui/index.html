@@ -519,39 +519,46 @@ function renderDownloads(tasks) {
         const showActions = showActionButtons(task.status);
         
         return `
-        <div class="bg-surface-container-low p-5 rounded-2xl border border-surface-container flex flex-col gap-3 group hover:border-outline-variant transition-colors ${task.status === 'completed' ? 'opacity-60' : ''}">
-            <div class="flex justify-between items-start">
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold text-on-surface truncate pr-4">${escapeHtml(task.title || 'Загрузка...')}</h3>
-                    <p class="text-sm text-secondary mt-1">${formatBytes(task.downloaded_bytes)} / ${formatBytes(task.total_bytes)} • <span class="${statusColor} font-medium italic">${statusText}</span></p>
-                    ${task.speed ? `<p class="text-xs text-secondary mt-1">${task.speed} • ETA: ${task.eta}</p>` : ''}
+        <div class="bg-surface-container-low p-4 rounded-2xl border border-surface-container flex gap-4 group hover:border-outline-variant transition-colors ${task.status === 'completed' ? 'opacity-60' : ''}">
+            <!-- Thumbnail -->
+            ${task.thumbnail ? `
+            <img src="${task.thumbnail}" alt="" class="w-24 h-16 object-cover rounded-lg bg-surface-container-high shrink-0" loading="lazy" onerror="this.style.display='none'">
+            ` : ''}
+            <!-- Info -->
+            <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div class="flex justify-between items-start gap-4">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-semibold text-on-surface truncate">${escapeHtml(task.title || 'Загрузка...')}</h3>
+                        <p class="text-sm text-secondary mt-1">${formatBytes(task.downloaded_bytes)} / ${formatBytes(task.total_bytes)} • <span class="${statusColor} font-medium italic">${statusText}</span></p>
+                        ${task.speed ? `<p class="text-xs text-secondary mt-0.5">${task.speed} • ETA: ${task.eta}</p>` : ''}
+                    </div>
+                    <div class="flex gap-1 shrink-0">
+                        ${showActions ? `
+                            ${task.status === 'paused' ? `
+                            <button onclick="resumeTask('${task.id}')" class="text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="Продолжить">
+                                <span class="material-symbols-outlined text-[20px]">play_arrow</span>
+                            </button>
+                            ` : ''}
+                            ${task.status === 'downloading' ? `
+                            <button onclick="pauseTask('${task.id}')" class="text-on-secondary-container hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="Приостановить">
+                                <span class="material-symbols-outlined text-[20px]">pause</span>
+                            </button>
+                            ` : ''}
+                            <button onclick="cancelTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Отменить">
+                                <span class="material-symbols-outlined text-[20px]">close</span>
+                            </button>
+                        ` : `
+                            <button onclick="removeTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Удалить">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        `}
+                    </div>
                 </div>
-                <div class="flex gap-2">
-                    ${showActions ? `
-                        ${task.status === 'paused' ? `
-                        <button onclick="resumeTask('${task.id}')" class="text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="Продолжить">
-                            <span class="material-symbols-outlined text-[20px]">play_arrow</span>
-                        </button>
-                        ` : ''}
-                        ${task.status === 'downloading' ? `
-                        <button onclick="pauseTask('${task.id}')" class="text-on-secondary-container hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="Приостановить">
-                            <span class="material-symbols-outlined text-[20px]">pause</span>
-                        </button>
-                        ` : ''}
-                        <button onclick="cancelTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Отменить">
-                            <span class="material-symbols-outlined text-[20px]">close</span>
-                        </button>
-                    ` : `
-                        <button onclick="removeTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="Удалить">
-                            <span class="material-symbols-outlined text-[20px]">delete</span>
-                        </button>
-                    `}
+                <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-2">
+                    <div class="${progressBarColor} h-full rounded-full transition-all duration-500" style="width: ${task.progress}%"></div>
                 </div>
+                ${task.error_message ? `<p class="text-xs text-error mt-1">${escapeHtml(task.error_message)}</p>` : ''}
             </div>
-            <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-                <div class="${progressBarColor} h-full rounded-full transition-all duration-500" style="width: ${task.progress}%"></div>
-            </div>
-            ${task.error_message ? `<p class="text-xs text-error mt-1">${escapeHtml(task.error_message)}</p>` : ''}
         </div>
         `;
     }).join('');
