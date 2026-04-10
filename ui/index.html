@@ -223,7 +223,7 @@ tailwind.config = {
         <button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="Переключить тему">
             <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
         </button>
-        <a href="/settings" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400">
+        <a id="settings-link" href="/settings" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400">
             <span class="material-symbols-outlined">settings</span>
         </a>
         <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" title="Закрыть приложение">
@@ -348,6 +348,10 @@ downloadBtn.addEventListener('click', async () => {
     downloadBtn.disabled = true;
     downloadBtn.textContent = 'Проверка...';
 
+    // Блокируем кнопку настроек во время проверки URL
+    const settingsLink = document.getElementById('settings-link');
+    settingsLink.classList.add('pointer-events-none', 'opacity-50');
+
     try {
         // Проверяем, является ли URL плейлистом
         const response = await fetch(`${API_URL}/api/playlist/info`, {
@@ -378,6 +382,8 @@ downloadBtn.addEventListener('click', async () => {
     } finally {
         downloadBtn.disabled = false;
         downloadBtn.textContent = 'Скачать';
+        // Разблокируем кнопку настроек
+        settingsLink.classList.remove('pointer-events-none', 'opacity-50');
     }
 });
 
