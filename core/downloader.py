@@ -179,6 +179,7 @@ class DownloadManager:
             return {
                 "title": playlist_title or "Плейлист",
                 "entries": entries,
+                "is_playlist": len(entries) >= 2,
             }
         except Exception as e:
             return {"error": str(e)[:200]}

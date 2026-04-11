@@ -348,12 +348,17 @@ downloadBtn.addEventListener('click', async () => {
     downloadBtn.disabled = true;
     downloadBtn.textContent = 'Проверка...';
 
-    // Блокируем кнопку настроек во время проверки URL
     const settingsLink = document.getElementById('settings-link');
     settingsLink.classList.add('pointer-events-none', 'opacity-50');
 
     try {
-        // Проверяем, является ли URL плейлистом
+        // Быстрая проверка на одиночное видео по URL — без запроса к API
+        if (isSingleVideoUrl(url)) {
+            await startDownload(url);
+            return;
+        }
+
+        // Запрашиваем API только для потенциальных плейлистов
         const response = await fetch(`${API_URL}/api/playlist/info`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -362,30 +367,52 @@ downloadBtn.addEventListener('click', async () => {
 
         const data = await response.json();
 
-        if (data.entries && data.entries.length > 0) {
-            // Это плейлист (или список видео) — открываем диалог
+        if (data.error) {
+            // Ошибка при получении плейлиста — пробуем как обычное видео
+            await startDownload(url);
+        } else if (data.is_playlist && data.entries && data.entries.length >= 2) {
+            // Настоящий плейлист — открываем диалог выбора
             currentPlaylistUrl = url;
             playlistEntries = data.entries;
             selectedIndices = new Set();
             showPlaylistDialog(data);
-        } else if (data.error) {
-            // Ошибка — показываем сообщение и не продолжаем
-            showToast(data.error, 'Ошибка плейлиста');
         } else {
-            // Не плейлист или нет входов — скачиваем как обычное видео
+            // Одно видео (или ошибка детекции) — скачиваем напрямую
             await startDownload(url);
         }
     } catch (err) {
         console.error('Ошибка при проверке URL:', err);
-        // На всякий случай пытаемся скачать как видео
         await startDownload(url);
     } finally {
         downloadBtn.disabled = false;
         downloadBtn.textContent = 'Скачать';
-        // Разблокируем кнопку настроек
         settingsLink.classList.remove('pointer-events-none', 'opacity-50');
     }
 });
+
+/**
+ * Возвращает true если URL явно указывает на одиночное видео.
+ * youtu.be/ID — всегда одиночное
+ * youtube.com/watch?v=ID — одиночное, если нет параметра &list=
+ */
+function isSingleVideoUrl(url) {
+    try {
+        const u = new URL(url);
+        const host = u.hostname.replace('www.', '');
+
+        // youtu.be/VIDEO_ID — короткая ссылка, всегда одно видео
+        if (host === 'youtu.be') return true;
+
+        // youtube.com/watch?v=ID — одиночное видео только без &list=
+        if ((host === 'youtube.com' || host === 'm.youtube.com') && u.pathname === '/watch') {
+            return !u.searchParams.has('list');
+        }
+
+        return false;
+    } catch {
+        return false;
+    }
+}
 
 async function startDownload(url) {
     try {
