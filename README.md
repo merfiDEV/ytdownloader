@@ -80,11 +80,7 @@ pip install -r requirements.txt
 ### Запуск
 
 ```bash
-# Десктопное приложение (полноэкранное окно)
 python main.py
-
-# Только веб-сервер (доступ через браузер на http://127.0.0.1:8765)
-python main.py --web
 ```
 
 ---
