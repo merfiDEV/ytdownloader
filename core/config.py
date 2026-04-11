@@ -18,6 +18,7 @@ class Settings(BaseModel):
     cookies_path: str = ""
     use_browser_cookies: bool = False
     selected_browser: str = "chrome"
+    enable_sponsorblock: bool = False
 
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"

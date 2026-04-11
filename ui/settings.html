@@ -378,6 +378,32 @@ tailwind.config = {
                     <div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
             </div>
+
+            <!-- SponsorBlock Toggle -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-primary-container/10 rounded-xl">
+                            <span class="material-symbols-outlined text-primary">ads_click</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-on-surface">Интеграция SponsorBlock</p>
+                            <p class="text-sm text-on-surface-variant">Вырезать рекламу, интро и спонсорские вставки</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input id="sponsorblock-toggle" type="checkbox" class="sr-only peer">
+                        <div class="w-12 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+                <!-- SponsorBlock Warning -->
+                <div id="sponsorblock-warning" class="hidden flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mx-4 mb-2">
+                    <span class="material-symbols-outlined text-amber-500 text-base mt-0.5">warning</span>
+                    <p class="text-xs text-amber-600 dark:text-amber-400">
+                        Включение SponsorBlock может увеличить время обработки видео и в редких случаях работать нестабильно.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -720,6 +746,19 @@ function applySettings(settings) {
     document.getElementById('random-filename-toggle').checked = settings.random_filename;
     document.getElementById('cookies-path-text').textContent = settings.cookies_path || "Не указан";
     
+    // SponsorBlock
+    const sbToggle = document.getElementById('sponsorblock-toggle');
+    const sbWarning = document.getElementById('sponsorblock-warning');
+    if (sbToggle) {
+        sbToggle.checked = settings.enable_sponsorblock;
+        // Показать/скрыть предупреждение
+        if (settings.enable_sponsorblock) {
+            sbWarning.classList.remove('hidden');
+        } else {
+            sbWarning.classList.add('hidden');
+        }
+    }
+    
     // Cookies Source: определяем режим
     if (settings.use_browser_cookies) {
         cookieSource = 'browser';
@@ -776,6 +815,7 @@ document.getElementById('save-btn').addEventListener('click', async () => {
         wifi_only: document.getElementById('wifi-only-toggle').checked,
         auto_clear_queue: document.getElementById('auto-clear-toggle').checked,
         random_filename: document.getElementById('random-filename-toggle').checked,
+        enable_sponsorblock: document.getElementById('sponsorblock-toggle').checked,
         cookies_path: cookieSource === 'none' ? '' : currentSettings.cookies_path,
         use_browser_cookies: cookieSource === 'browser',
         selected_browser: browserValue
@@ -930,6 +970,18 @@ async function updateStorageUsage() {
 }
 
 updateStorageUsage();
+
+// Обработка тумблера SponsorBlock (показ предупреждения)
+document.getElementById('sponsorblock-toggle')?.addEventListener('change', (e) => {
+    const warning = document.getElementById('sponsorblock-warning');
+    if (warning) {
+        if (e.target.checked) {
+            warning.classList.remove('hidden');
+        } else {
+            warning.classList.add('hidden');
+        }
+    }
+});
 
 // Закрытие приложения
 document.getElementById('close-app')?.addEventListener('click', () => {

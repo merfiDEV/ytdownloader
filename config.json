@@ -8,5 +8,6 @@
   "random_filename": true,
   "cookies_path": "D:\\code\\ytdown\\chromewebstore.google.com_cookies.txt",
   "use_browser_cookies": false,
-  "selected_browser": "chrome"
+  "selected_browser": "chrome",
+  "enable_sponsorblock": false
 }

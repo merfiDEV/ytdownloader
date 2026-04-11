@@ -234,6 +234,9 @@ class DownloadManager:
         if settings.download_format.lower() == "mp3":
             cmd.extend(["-x", "--audio-format", "mp3"])
 
+        if settings.enable_sponsorblock:
+            cmd.extend(["--sponsorblock-remove", "sponsor,intro,outro,selfpromo,interaction,preview,filler"])
+
         cmd.extend(self._get_cookie_args(settings))
 
         cmd.append(task.url)
