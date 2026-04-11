@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 from core.config import Settings, load_settings, save_settings, ensure_save_location
 from core.downloader import download_manager, DownloadStatus
+from core.history import history_manager, HistoryRecord
 
 
 # --- Модели запросов/ответов ---
@@ -205,10 +206,23 @@ async def remove_download(task_id: str):
 
 
 @app.post("/api/open-folder/{task_id}")
-async def open_folder(task_id: str):
+@app.post("/api/open-folder")
+async def open_folder(task_id: str = None, request: Request = None):
     """Открыть папку с загруженным файлом в проводнике."""
     settings = load_settings()
-    save_path = Path(settings.save_location)
+    
+    # Пытаемся достать путь из json (если передан)
+    target_path = None
+    try:
+        if request:
+            body = await request.json()
+            if "path" in body and body["path"]:
+                tp = Path(body["path"])
+                target_path = tp if tp.is_dir() else tp.parent
+    except:
+        pass
+        
+    save_path = target_path if target_path and target_path.exists() else Path(settings.save_location)
 
     if not save_path.exists():
         return {"error": "Папка сохранения не найдена"}
@@ -301,6 +315,30 @@ async def get_storage_info():
     }
 
 
+# --- API History ---
+
+@app.get("/api/history", response_model=list[HistoryRecord])
+async def get_history():
+    """Получить всю историю загрузок."""
+    return history_manager.get_all()
+
+
+@app.delete("/api/history/{record_id}")
+async def remove_history_record(record_id: str):
+    """Удалить запись из истории."""
+    success = history_manager.delete_record(record_id)
+    if success:
+        return {"status": "removed"}
+    return {"error": "Record not found"}
+
+
+@app.delete("/api/history")
+async def clear_history():
+    """Очистить всю историю."""
+    history_manager.clear_all()
+    return {"status": "cleared"}
+
+
 # --- WebSocket ---
 
 @app.websocket("/ws")
@@ -329,6 +367,12 @@ async def index():
 async def settings_page():
     """Страница настроек."""
     return FileResponse(UI_DIR / "settings.html")
+
+
+@app.get("/history")
+async def history_page():
+    """Страница истории."""
+    return FileResponse(UI_DIR / "history.html")
 
 
 app.mount("/static", StaticFiles(directory=str(UI_DIR)), name="static")

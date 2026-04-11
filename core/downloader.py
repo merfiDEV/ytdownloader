@@ -13,6 +13,7 @@ from typing import Optional
 import psutil
 
 from core.config import Settings, load_settings
+from core.history import history_manager
 
 
 class DownloadStatus(str, Enum):
@@ -346,6 +347,21 @@ class DownloadManager:
                 task.status = DownloadStatus.COMPLETED
                 task.progress = 100.0
 
+                # Сохраняем в историю
+                try:
+                    history_manager.add_record(
+                        url=task.url,
+                        title=task.title,
+                        thumbnail=task.thumbnail,
+                        file_path=str(Path(settings.save_location)),
+                        file_size=task.total_bytes,
+                        format=settings.download_format,
+                        quality=settings.default_quality,
+                        status="completed"
+                    )
+                except Exception as e:
+                    print("Error saving history:", e)
+
                 # Авто-очистка: ждём 2 секунды чтобы пользователь увидел статус, затем удаляем
                 if settings.auto_clear_queue:
                     await asyncio.sleep(2)
@@ -357,10 +373,40 @@ class DownloadManager:
                     stderr_output = stderr_output.decode("utf-8", errors="replace")
                 task.status = DownloadStatus.ERROR
                 task.error_message = stderr_output.strip()[:200] if stderr_output else "Unknown error"
+                
+                try:
+                    history_manager.add_record(
+                        url=task.url,
+                        title=task.title,
+                        thumbnail=task.thumbnail,
+                        file_path="",
+                        file_size=0,
+                        format=settings.download_format,
+                        quality=settings.default_quality,
+                        status="error",
+                        error_msg=task.error_message
+                    )
+                except:
+                    pass
 
         except Exception as e:
             task.status = DownloadStatus.ERROR
             task.error_message = str(e)[:200]
+            
+            try:
+                history_manager.add_record(
+                    url=task.url,
+                    title=task.title,
+                    thumbnail=task.thumbnail,
+                    file_path="",
+                    file_size=0,
+                    format=settings.download_format,
+                    quality=settings.default_quality,
+                    status="error",
+                    error_msg=task.error_message
+                )
+            except:
+                pass
 
     def _manage_process_tree(self, pid: int, action: str) -> None:
         """Рекурсивно управляет деревом процессов."""

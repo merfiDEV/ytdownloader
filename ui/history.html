@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+<script>
+    (function() {
+        const stored = localStorage.getItem('dark_theme');
+        if (stored === 'true') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else if (stored === 'false') {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        }
+    })();
+</script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StreamVault — История</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+:root.light {
+    --primary: #bc0100;
+    --on-primary: #ffffff;
+    --primary-container: #eb0000;
+    --on-primary-container: #fffbff;
+    --secondary: #5f5e5e;
+    --on-secondary: #ffffff;
+    --secondary-container: #e4e2e1;
+    --on-secondary-container: #656464;
+    --tertiary: #0059ba;
+    --on-tertiary: #ffffff;
+    --tertiary-container: #0071e8;
+    --on-tertiary-container: #fefcff;
+    --error: #ba1a1a;
+    --on-error: #ffffff;
+    --error-container: #ffdad6;
+    --on-error-container: #93000a;
+    --background: #f9f9f9;
+    --on-background: #1a1c1c;
+    --surface: #f9f9f9;
+    --on-surface: #1a1c1c;
+    --surface-variant: #e2e2e2;
+    --on-surface-variant: #603e39;
+    --outline: #956d67;
+    --outline-variant: #ebbbb4;
+    --surface-container-lowest: #ffffff;
+    --surface-container-low: #f3f3f3;
+    --surface-container: #eeeeee;
+    --surface-container-high: #e8e8e8;
+    --surface-container-highest: #e2e2e2;
+}
+
+:root.dark {
+    --primary: #ffb4a8;
+    --on-primary: #690000;
+    --primary-container: #930100;
+    --on-primary-container: #ffdad4;
+    --secondary: #c8c6c5;
+    --on-secondary: #303030;
+    --secondary-container: #474746;
+    --on-secondary-container: #e4e2e1;
+    --tertiary: #acc7ff;
+    --on-tertiary: #002f67;
+    --tertiary-container: #004491;
+    --on-tertiary-container: #d7e2ff;
+    --error: #ffb4ab;
+    --on-error: #690005;
+    --error-container: #93000a;
+    --on-error-container: #ffdad6;
+    --background: #111414;
+    --on-background: #e2e2e2;
+    --surface: #111414;
+    --on-surface: #e2e2e2;
+    --surface-variant: #534341;
+    --on-surface-variant: #d8c2be;
+    --outline: #a08c8a;
+    --outline-variant: #534341;
+    --surface-container-lowest: #0c0f0f;
+    --surface-container-low: #1a1c1c;
+    --surface-container: #1e2020;
+    --surface-container-high: #282a2a;
+    --surface-container-highest: #333535;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.emphasized-decelerate {
+    transition-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--on-surface);
+}
+h1, h2, h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--outline-variant) transparent;
+}
+*::-webkit-scrollbar {
+    width: 4px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    background: var(--outline-variant);
+    border-radius: 99px;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--outline);
+}
+</style>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-container-lowest": "var(--surface-container-lowest)",
+        "surface-container-low": "var(--surface-container-low)",
+        "surface-container": "var(--surface-container)",
+        "surface-container-high": "var(--surface-container-high)",
+        "surface-container-highest": "var(--surface-container-highest)",
+        "surface-variant": "var(--surface-variant)",
+        "on-surface-variant": "var(--on-surface-variant)",
+        "primary": "var(--primary)",
+        "on-primary": "var(--on-primary)",
+        "primary-container": "var(--primary-container)",
+        "on-primary-container": "var(--on-primary-container)",
+        "error": "var(--error)",
+        "error-container": "var(--error-container)",
+        "on-error-container": "var(--on-error-container)"
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full sticky top-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_12px_32px_rgba(26,28,28,0.06)] flex justify-between items-center px-6 py-4">
+    <div class="flex items-center gap-4">
+        <a href="/" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 ease-emphasized">
+            <span class="material-symbols-outlined text-on-surface">arrow_back</span>
+        </a>
+        <h1 class="text-2xl font-bold text-primary font-['Plus_Jakarta_Sans'] tracking-tight">История</h1>
+    </div>
+    <div class="flex items-center gap-2">
+        <button id="clear-btn" class="flex items-center gap-2 text-error hover:bg-error/10 px-4 py-2 rounded-full font-bold text-sm transition-colors duration-300">
+            <span class="material-symbols-outlined text-sm">delete_sweep</span> Очистить всё
+        </button>
+        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" title="Закрыть приложение">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Modal Dialog -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center backdrop-blur-sm transition-opacity opacity-0 duration-300">
+        <div class="bg-surface-container-lowest p-6 rounded-3xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300">
+            <div class="flex items-center gap-3 text-error mb-4">
+                <span class="material-symbols-outlined text-3xl">warning</span>
+                <h3 class="text-xl font-bold font-['Plus_Jakarta_Sans']">Очистка истории</h3>
+            </div>
+            <p class="text-on-surface-variant mb-6">Вы уверены, что хотите очистить всю историю? Это действие нельзя отменить.</p>
+            <div class="flex justify-end gap-3">
+                <button id="cancel-clear" class="px-5 py-2.5 rounded-full font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors">Отмена</button>
+                <button id="confirm-clear" class="px-5 py-2.5 rounded-full font-bold bg-error text-on-error hover:bg-error/90 transition-colors shadow-lg shadow-error/20">Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Header -->
+    <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="bg-surface-container-lowest p-6 rounded-3xl relative overflow-hidden flex flex-col justify-center">
+            <span class="text-sm font-medium text-on-surface-variant">Всего файлов скачано</span>
+            <span id="total-files" class="text-3xl font-extrabold text-primary mt-1">0</span>
+        </div>
+        <div class="bg-surface-container-lowest p-6 rounded-3xl relative overflow-hidden flex flex-col justify-center">
+            <span class="text-sm font-medium text-on-surface-variant">Общий вес загрузок</span>
+            <span id="total-size" class="text-3xl font-extrabold text-primary mt-1">0 МБ</span>
+        </div>
+    </div>
+
+    <!-- History List -->
+    <div id="history-container" class="space-y-4">
+        <!-- Журнал загружается скриптом -->
+    </div>
+</main>
+
+<script>
+const API_URL = window.location.origin;
+
+function formatBytes(bytes, decimals = 1) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleString('ru-RU', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+function createHistoryCard(record) {
+    const isError = record.status === 'error';
+    const bgColor = isError ? 'bg-error-container/30 border border-error/20' : 'bg-surface-container-lowest';
+    const icon = isError ? 'error' : (record.format === 'mp3' ? 'library_music' : 'movie');
+    const iconColor = isError ? 'text-error' : 'text-primary';
+    const iconBg = isError ? 'bg-error/10' : 'bg-primary/10';
+    
+    // Thumbnail fallback
+    const thumbUrl = record.thumbnail || "https://dummyimage.com/160x90/e2e2e2/1a1c1c.jpg&text=No+Image";
+
+    return `
+    <div class="group flex flex-col sm:flex-row gap-4 p-4 ${bgColor} rounded-2xl hover:shadow-md transition-all duration-300">
+        <!-- Thumbnail -->
+        <div class="relative w-full sm:w-48 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-black">
+            <img src="${thumbUrl}" alt="Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity">
+            <div class="absolute bottom-2 right-2 px-2 py-1 bg-black/70 rounded-md text-xs font-bold text-white flex items-center gap-1">
+                ${record.quality || record.format.toUpperCase()}
+            </div>
+            ${isError ? `
+            <div class="absolute inset-0 bg-error/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-3xl font-bold drop-shadow-md">warning</span>
+            </div>
+            ` : ''}
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 flex flex-col justify-between min-w-0">
+            <div>
+                <h3 class="font-bold text-lg text-on-surface line-clamp-2 leading-tight mb-1" title="${record.title}">
+                    ${record.title}
+                </h3>
+                <div class="flex items-center gap-3 text-sm text-on-surface-variant flex-wrap">
+                    <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] ${iconColor}">${icon}</span> ${record.format.toUpperCase()}</span>
+                    <span>•</span>
+                    <span>${formatDate(record.created_at)}</span>
+                    ${!isError && record.file_size ? `<span>•</span><span>${formatBytes(record.file_size)}</span>` : ''}
+                </div>
+                ${isError ? `
+                <p class="text-sm text-error mt-2 line-clamp-1" title="${record.error_msg}">
+                    ${record.error_msg}
+                </p>
+                ` : ''}
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex gap-2">
+                    ${!isError ? `
+                    <button class="open-folder-btn px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-sm font-semibold transition-colors flex items-center gap-2" data-path="${record.file_path}">
+                        <span class="material-symbols-outlined text-[18px]">folder_open</span> Открыть папку
+                    </button>
+                    ` : ''}
+                    <button class="copy-url-btn px-3 py-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant text-sm font-semibold transition-colors border border-on-surface-variant/20" data-url="${record.url}">
+                        <span class="material-symbols-outlined text-[18px]">content_copy</span> URL
+                    </button>
+                </div>
+                <button class="delete-btn p-1.5 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" data-id="${record.id}" title="Удалить из истории">
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    `;
+}
+
+async function loadHistory() {
+    try {
+        const response = await fetch(`${API_URL}/api/history`);
+        const data = await response.json();
+        
+        const container = document.getElementById('history-container');
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-20 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-6xl opacity-50 mb-4 block">history</span>
+                    <p class="text-lg">История пуста</p>
+                </div>
+            `;
+            document.getElementById('total-files').textContent = "0";
+            document.getElementById('total-size').textContent = "0 B";
+            return;
+        }
+
+        let html = '';
+        let totalSize = 0;
+        let successCount = 0;
+
+        data.forEach(record => {
+            html += createHistoryCard(record);
+            if (record.status !== 'error') {
+                successCount++;
+                totalSize += record.file_size || 0;
+            }
+        });
+
+        container.innerHTML = html;
+        document.getElementById('total-files').textContent = successCount;
+        document.getElementById('total-size').textContent = formatBytes(totalSize);
+
+        // Привязываем слушатели
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.dataset.id;
+                await fetch(`${API_URL}/api/history/${id}`, { method: 'DELETE' });
+                loadHistory();
+            });
+        });
+
+        document.querySelectorAll('.open-folder-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const path = btn.dataset.path;
+                await fetch(`${API_URL}/api/open-folder`, { 
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ path: path })
+                });
+            });
+        });
+
+        document.querySelectorAll('.copy-url-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(btn.dataset.url);
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<span class="material-symbols-outlined text-[18px]">check</span> URL`;
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            });
+        });
+
+    } catch (err) {
+        console.error("Ошибка загрузки истории", err);
+    }
+}
+
+const confirmModal = document.getElementById('confirm-modal');
+const modalContent = confirmModal.querySelector('div');
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+    confirmModal.classList.remove('hidden');
+    confirmModal.classList.add('flex');
+    // Небольшая задержка для анимации
+    requestAnimationFrame(() => {
+        confirmModal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+    });
+});
+
+document.getElementById('cancel-clear').addEventListener('click', () => {
+    confirmModal.classList.add('opacity-0');
+    modalContent.classList.add('scale-95');
+    setTimeout(() => {
+        confirmModal.classList.add('hidden');
+        confirmModal.classList.remove('flex');
+    }, 300);
+});
+
+document.getElementById('confirm-clear').addEventListener('click', async () => {
+    confirmModal.classList.add('opacity-0');
+    modalContent.classList.add('scale-95');
+    setTimeout(() => {
+        confirmModal.classList.add('hidden');
+        confirmModal.classList.remove('flex');
+    }, 300);
+    
+    await fetch(`${API_URL}/api/history`, { method: 'DELETE' });
+    loadHistory();
+});
+
+document.getElementById('close-app').addEventListener('click', () => {
+    if (window.pywebview && window.pywebview.api) {
+        window.pywebview.api.close();
+    }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadThemeSettings();
+    loadHistory();
+});
+
+async function loadThemeSettings() {
+    try {
+        const response = await fetch(`${API_URL}/api/settings`);
+        const settings = await response.json();
+        
+        if (settings.dark_theme) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки настроек темы:', err);
+    }
+}
+
+</script>
+</body>
+</html>

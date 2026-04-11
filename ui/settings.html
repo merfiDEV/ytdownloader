@@ -235,10 +235,13 @@ tailwind.config = {
 <!-- TopNavBar -->
 <header class="w-full sticky top-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_12px_32px_rgba(26,28,28,0.06)] flex justify-between items-center px-6 py-4">
     <div class="flex items-center gap-4">
-        <a href="/" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 ease-emphasized">
+        <a href="/" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 ease-emphasized" title="На главную">
             <span class="material-symbols-outlined text-on-surface">arrow_back</span>
         </a>
-        <h1 class="text-2xl font-bold text-red-700 dark:text-red-500 font-['Plus_Jakarta_Sans'] tracking-tight">Настройки</h1>
+        <a href="/history" class="p-2 -ml-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="История загрузок">
+            <span class="material-symbols-outlined">history</span>
+        </a>
+        <h1 class="text-2xl font-bold text-red-700 dark:text-red-500 font-['Plus_Jakarta_Sans'] tracking-tight ml-2">Настройки</h1>
     </div>
     <div class="flex items-center gap-2">
         <button id="save-btn" class="signature-gradient text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50">
