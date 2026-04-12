@@ -236,19 +236,19 @@ tailwind.config = {
 <!-- Header -->
 <header class="w-full flex justify-between items-center px-6 py-4">
     <div class="flex items-center gap-2">
-        <span class="text-primary font-headline font-800 text-2xl tracking-tighter">VOID</span>
+        <span class="text-primary font-headline font-800 text-2xl tracking-tighter" data-i18n="common.app_subtitle">VOID</span>
     </div>
     <div class="flex items-center gap-2">
-        <button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="Переключить тему">
+        <button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="main.theme_toggle" title="Переключить тему">
             <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
         </button>
-        <a id="history-link" href="/history" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="История загрузок">
+        <a id="history-link" href="/history" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="common.history" title="История загрузок">
             <span class="material-symbols-outlined">history</span>
         </a>
-        <a id="settings-link" href="/settings" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="Настройки">
+        <a id="settings-link" href="/settings" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="common.settings" title="Настройки">
             <span class="material-symbols-outlined">settings</span>
         </a>
-        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" title="Закрыть приложение">
+        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" data-i18n-title="common.close_app" title="Закрыть приложение">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -263,7 +263,7 @@ tailwind.config = {
         <!-- Dialog Header -->
         <div class="flex items-center justify-between p-6 border-b border-outline-variant">
             <div>
-                <h2 id="playlist-title" class="text-xl font-headline font-bold text-on-surface">Плейлист</h2>
+                <h2 id="playlist-title" class="text-xl font-headline font-bold text-on-surface" data-i18n="main.playlist_title">Плейлист</h2>
                 <p id="playlist-count" class="text-sm text-on-surface-variant mt-1">0 видео</p>
             </div>
             <button id="playlist-close" class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface">
@@ -275,10 +275,10 @@ tailwind.config = {
         <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
             <!-- Select All / Deselect All -->
             <div class="flex gap-3 mb-4 px-2">
-                <button id="select-all-btn" class="text-sm text-primary hover:text-primary-container font-semibold transition-colors">
+                <button id="select-all-btn" class="text-sm text-primary hover:text-primary-container font-semibold transition-colors" data-i18n="main.select_all">
                     Выбрать все
                 </button>
-                <button id="deselect-all-btn" class="text-sm text-on-surface-variant hover:text-on-surface font-semibold transition-colors">
+                <button id="deselect-all-btn" class="text-sm text-on-surface-variant hover:text-on-surface font-semibold transition-colors" data-i18n="main.deselect_all">
                     Снять все
                 </button>
             </div>
@@ -304,9 +304,9 @@ tailwind.config = {
         <div class="relative flex flex-col md:flex-row gap-4 p-3 bg-surface-container-lowest rounded-[2rem] shadow-sm border border-surface-container">
             <div class="flex-1 flex items-center px-4 gap-4">
                 <span class="material-symbols-outlined text-primary">link</span>
-                <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container" placeholder="Вставьте URL видео или плейлиста..." type="text"/>
+                <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container" data-i18n-placeholder="main.url_placeholder" placeholder="Вставьте URL видео или плейлиста..." type="text"/>
             </div>
-            <button id="download-btn" class="signature-gradient text-on-primary px-10 py-4 rounded-full font-headline font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="download-btn" class="signature-gradient text-on-primary px-10 py-4 rounded-full font-headline font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="main.download_btn">
                 Скачать
             </button>
         </div>
@@ -314,15 +314,15 @@ tailwind.config = {
         <!-- Download Queue Section -->
         <section class="flex flex-col gap-6">
             <div class="flex items-center justify-between px-2">
-                <h2 class="font-headline font-bold text-xl text-on-surface">Активные загрузки</h2>
+                <h2 class="font-headline font-bold text-xl text-on-surface" data-i18n="main.active_downloads">Активные загрузки</h2>
                 <span id="active-count" class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-label font-semibold">0 items</span>
             </div>
             <div id="downloads-list" class="space-y-3">
                 <!-- Загрузки будут добавлены сюда динамически -->
                 <div id="empty-state" class="text-center py-12 text-on-secondary-container">
                     <span class="material-symbols-outlined text-6xl mb-4 opacity-50">download</span>
-                    <p class="text-lg">Нет активных загрузок</p>
-                    <p class="text-sm mt-2">Вставьте URL выше чтобы начать загрузку</p>
+                    <p class="text-lg" data-i18n="main.no_downloads">Нет активных загрузок</p>
+                    <p class="text-sm mt-2" data-i18n="main.no_downloads_hint">Вставьте URL выше чтобы начать загрузку</p>
                 </div>
             </div>
         </section>
@@ -336,6 +336,104 @@ const urlInput = document.getElementById('url-input');
 const downloadBtn = document.getElementById('download-btn');
 const activeCount = document.getElementById('active-count');
 const emptyState = document.getElementById('empty-state');
+
+// --- i18n ---
+let translations = {};
+let currentLang = 'ru';
+
+function getCachedLang() {
+    return localStorage.getItem('sv_language') || 'ru';
+}
+
+function getCachedTranslations(lang) {
+    try {
+        const data = localStorage.getItem(`sv_i18n_${lang}`);
+        return data ? JSON.parse(data) : null;
+    } catch { return null; }
+}
+
+function cacheTranslations(lang, data) {
+    try {
+        localStorage.setItem(`sv_i18n_${lang}`, JSON.stringify(data));
+    } catch {}
+}
+
+async function loadTranslations(lang) {
+    try {
+        const res = await fetch(`${API_URL}/api/i18n/${lang}`);
+        if (res.ok) {
+            const data = await res.json();
+            cacheTranslations(lang, data);
+            return data;
+        }
+    } catch (e) {
+        console.warn('Failed to fetch translations:', e);
+    }
+    return null;
+}
+
+function t(key, params = {}) {
+    const keys = key.split('.');
+    let val = translations;
+    for (const k of keys) {
+        if (val && typeof val === 'object' && k in val) {
+            val = val[k];
+        } else {
+            return key;
+        }
+    }
+    if (typeof val !== 'string') return key;
+    return val.replace(/\{(\w+)\}/g, (_, p) => params[p] ?? `{${p}}`);
+}
+
+function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = t(key);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.title = t(key);
+    });
+}
+
+async function initI18n() {
+    // 1. Мгновенно: читаем язык из кеша
+    currentLang = getCachedLang();
+    const cached = getCachedTranslations(currentLang);
+    if (cached) {
+        translations = cached;
+        applyTranslations();
+    }
+
+    // 2. Фон: проверяем сервер (язык мог измениться)
+    try {
+        const settingsRes = await fetch(`${API_URL}/api/settings`);
+        if (settingsRes.ok) {
+            const settings = await settingsRes.json();
+            const serverLang = settings.language || 'ru';
+            if (serverLang !== currentLang) {
+                currentLang = serverLang;
+                localStorage.setItem('sv_language', serverLang);
+            }
+            // Загружаем/обновляем переводы
+            const fresh = await loadTranslations(currentLang);
+            if (fresh) {
+                translations = fresh;
+                applyTranslations();
+            }
+        }
+    } catch (e) {
+        // Сервер недоступен — используем кеш
+    }
+}
+
+// Вызываем СРАЗУ — переводы применятся мгновенно из кеша
+initI18n();
 
 // WebSocket подключение
 let ws = null;
@@ -368,7 +466,7 @@ downloadBtn.addEventListener('click', async () => {
     if (!url) return;
 
     downloadBtn.disabled = true;
-    downloadBtn.textContent = 'Проверка...';
+    downloadBtn.textContent = t('main.download_btn_checking');
 
     const settingsLink = document.getElementById('settings-link');
     settingsLink.classList.add('pointer-events-none', 'opacity-50');
@@ -407,7 +505,7 @@ downloadBtn.addEventListener('click', async () => {
         await startDownload(url);
     } finally {
         downloadBtn.disabled = false;
-        downloadBtn.textContent = 'Скачать';
+        downloadBtn.textContent = t('main.download_btn');
         settingsLink.classList.remove('pointer-events-none', 'opacity-50');
     }
 });
@@ -461,7 +559,7 @@ function showPlaylistDialog(data) {
     const downloadBtn = document.getElementById('playlist-download-btn');
 
     title.textContent = data.title;
-    count.textContent = `${data.entries.length} видео`;
+    count.textContent = t('main.videos_count', { count: data.entries.length });
 
     renderPlaylistVideos(data.entries);
     updateDownloadButton();
@@ -479,7 +577,7 @@ function renderPlaylistVideos(entries) {
             <img src="${entry.thumbnail}" alt="" class="w-16 h-12 object-cover rounded-lg bg-surface-container-high shrink-0" loading="lazy" onerror="this.style.display='none'">
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-on-surface truncate">${escapeHtml(entry.title)}</p>
-                <p class="text-xs text-on-surface-variant">Видео #${entry.index}</p>
+                <p class="text-xs text-on-surface-variant">${t('main.video_label', { index: entry.index })}</p>
             </div>
             <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity text-[20px] shrink-0">play_circle</span>
         </label>
@@ -497,7 +595,7 @@ window.toggleVideoSelection = function(index, checked) {
 
 function updateDownloadButton() {
     const btn = document.getElementById('playlist-download-btn');
-    btn.textContent = `Скачать (${selectedIndices.size})`;
+    btn.textContent = t('main.download_selected', { count: selectedIndices.size });
     btn.disabled = selectedIndices.size === 0;
 }
 
@@ -536,7 +634,7 @@ document.getElementById('playlist-download-btn').addEventListener('click', async
 
     const btn = document.getElementById('playlist-download-btn');
     btn.disabled = true;
-    btn.textContent = 'Добавление...';
+    btn.textContent = t('main.downloading_playlist');
 
     try {
         const response = await fetch(`${API_URL}/api/playlist/download`, {
@@ -553,7 +651,7 @@ document.getElementById('playlist-download-btn').addEventListener('click', async
         console.error('Ошибка при загрузке плейлиста:', err);
     } finally {
         btn.disabled = false;
-        btn.textContent = `Скачать (${selectedIndices.size})`;
+        btn.textContent = t('main.download_selected', { count: selectedIndices.size });
     }
 });
 
@@ -623,14 +721,15 @@ function renderDownloads(tasks) {
 }
 
 function getStatusText(status) {
-    const map = {
-        'downloading': 'Загрузка...',
-        'paused': 'Приостановлено',
-        'completed': 'Завершено',
-        'error': 'Ошибка',
-        'processing': 'Обработка...'
+    const keyMap = {
+        'downloading': 'status.downloading',
+        'paused': 'status.paused',
+        'completed': 'status.completed',
+        'error': 'status.error',
+        'processing': 'status.preparing'
     };
-    return map[status] || status;
+    const key = keyMap[status];
+    return key ? t(key) : status;
 }
 
 function getStatusColor(status) {

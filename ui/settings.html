@@ -235,19 +235,19 @@ tailwind.config = {
 <!-- TopNavBar -->
 <header class="w-full sticky top-0 z-50 bg-surface-container-lowest/80 backdrop-blur-xl shadow-[0_12px_32px_rgba(26,28,28,0.06)] flex justify-between items-center px-6 py-4">
     <div class="flex items-center gap-4">
-        <a href="/" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 ease-emphasized" title="На главную">
+        <a href="/" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 ease-emphasized" data-i18n-title="common.back" title="На главную">
             <span class="material-symbols-outlined text-on-surface">arrow_back</span>
         </a>
-        <a href="/history" class="p-2 -ml-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" title="История загрузок">
+        <a href="/history" class="p-2 -ml-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="common.history" title="История загрузок">
             <span class="material-symbols-outlined">history</span>
         </a>
-        <h1 class="text-2xl font-bold text-red-700 dark:text-red-500 font-['Plus_Jakarta_Sans'] tracking-tight ml-2">Настройки</h1>
+        <h1 class="text-2xl font-bold text-red-700 dark:text-red-500 font-['Plus_Jakarta_Sans'] tracking-tight ml-2" data-i18n="settings.page_title">Настройки</h1>
     </div>
     <div class="flex items-center gap-2">
-        <button id="save-btn" class="signature-gradient text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50">
+        <button id="save-btn" class="signature-gradient text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50" data-i18n="common.save">
             Сохранить
         </button>
-        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" title="Закрыть приложение">
+        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" data-i18n-title="common.close_app" title="Закрыть приложение">
             <span class="material-symbols-outlined">close</span>
         </button>
     </div>
@@ -259,12 +259,12 @@ tailwind.config = {
         <div class="inline-block p-4 rounded-full bg-primary-container/10 mb-4">
             <span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">settings</span>
         </div>
-        <p class="text-on-surface-variant max-w-sm mx-auto">Настройте приложение под себя. Preferences сохраняются автоматически.</p>
+        <p class="text-on-surface-variant max-w-sm mx-auto" data-i18n="settings.page_subtitle">Настройте приложение под себя. Preferences сохраняются автоматически.</p>
     </div>
 
     <!-- Settings Group 1: Downloads -->
     <div class="mb-8">
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4">Настройки загрузки</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4" data-i18n="settings.section_downloads">Настройки загрузки</h2>
         <div class="space-y-2">
             <!-- Quality Setting Item -->
             <div class="group flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl hover:bg-surface-container-low transition-colors duration-300 ease-emphasized cursor-pointer">
@@ -273,8 +273,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-primary">hd</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Качество по умолчанию</p>
-                        <p class="text-sm text-on-surface-variant">Приоритет высокого качества видео</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.quality_label">Качество по умолчанию</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.quality_desc">Приоритет высокого качества видео</p>
                     </div>
                 </div>
                 <div class="relative">
@@ -286,7 +286,7 @@ tailwind.config = {
                     <div id="quality-menu" class="absolute right-0 top-full mt-2 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl z-50 min-w-[160px] hidden">
                         <div class="py-2">
                             <button class="quality-option w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center justify-between" data-value="best">
-                                <span>Лучшее</span>
+                                <span data-i18n="settings.quality_best">Лучшее</span>
                                 <span class="material-symbols-outlined text-primary text-[18px] hidden">check</span>
                             </button>
                             <button class="quality-option w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center justify-between" data-value="1080p">
@@ -317,8 +317,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-primary">movie</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Формат загрузки</p>
-                        <p class="text-sm text-on-surface-variant">Предпочтительный формат файлов</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.format_label">Формат загрузки</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.format_desc">Предпочтительный формат файлов</p>
                     </div>
                 </div>
                 <div class="relative">
@@ -338,7 +338,7 @@ tailwind.config = {
                                 <span class="material-symbols-outlined text-primary text-[18px] hidden">check</span>
                             </button>
                             <button class="format-option w-full px-4 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center justify-between" data-value="mp3">
-                                <span>MP3 (аудио)</span>
+                                <span data-i18n="settings.format_mp3">MP3 (аудио)</span>
                                 <span class="material-symbols-outlined text-primary text-[18px] hidden">check</span>
                             </button>
                         </div>
@@ -353,7 +353,7 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-primary">folder_open</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Путь сохранения</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.save_path_label">Путь сохранения</p>
                         <p id="save-location-text" class="text-sm text-on-surface-variant truncate max-w-[200px] md:max-w-md">/Videos/StreamVault</p>
                     </div>
                 </div>
@@ -369,8 +369,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-primary">casino</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Случайное имя файла</p>
-                        <p class="text-sm text-on-surface-variant">Вместо оригинального названия видео</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.random_filename_label">Случайное имя файла</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.random_filename_desc">Вместо оригинального названия видео</p>
                     </div>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -387,8 +387,8 @@ tailwind.config = {
                             <span class="material-symbols-outlined text-primary">ads_click</span>
                         </div>
                         <div>
-                            <p class="font-semibold text-on-surface">Интеграция SponsorBlock</p>
-                            <p class="text-sm text-on-surface-variant">Вырезать рекламу, интро и спонсорские вставки</p>
+                            <p class="font-semibold text-on-surface" data-i18n="settings.sponsorblock_label">Интеграция SponsorBlock</p>
+                            <p class="text-sm text-on-surface-variant" data-i18n="settings.sponsorblock_desc">Вырезать рекламу, интро и спонсорские вставки</p>
                         </div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -399,7 +399,7 @@ tailwind.config = {
                 <!-- SponsorBlock Warning -->
                 <div id="sponsorblock-warning" class="hidden flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mx-4 mb-2">
                     <span class="material-symbols-outlined text-amber-500 text-base mt-0.5">warning</span>
-                    <p class="text-xs text-amber-600 dark:text-amber-400">
+                    <p class="text-xs text-amber-600 dark:text-amber-400" data-i18n="settings.sponsorblock_warning">
                         Включение SponsorBlock может увеличить время обработки видео и в редких случаях работать нестабильно.
                     </p>
                 </div>
@@ -409,7 +409,7 @@ tailwind.config = {
 
     <!-- Settings Group: Appearance -->
     <div class="mb-12">
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4">Внешний вид</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4" data-i18n="settings.section_appearance">Внешний вид</h2>
         <div class="space-y-2">
             <!-- Dark Theme Toggle -->
             <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
@@ -418,8 +418,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-secondary">dark_mode</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Тёмная тема</p>
-                        <p class="text-sm text-on-surface-variant">Снижает нагрузку на глаза ночью</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.dark_theme_label">Тёмная тема</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.dark_theme_desc">Снижает нагрузку на глаза ночью</p>
                     </div>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -430,9 +430,32 @@ tailwind.config = {
         </div>
     </div>
 
+    <!-- Settings Group: Language -->
+    <div class="mb-12">
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4" data-i18n="settings.section_language">Язык</h2>
+        <div class="space-y-2">
+            <!-- Language Selection -->
+            <div class="p-4 bg-surface-container-lowest rounded-xl">
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="p-3 bg-primary-container/10 rounded-xl">
+                        <span class="material-symbols-outlined text-primary">translate</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.language_label">Язык интерфейса</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.language_desc">Выберите язык приложения</p>
+                    </div>
+                </div>
+                <div class="flex bg-surface-container-high rounded-full p-1 w-full">
+                    <button id="lang-btn-ru" class="lang-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-lang="ru" data-i18n="languages.ru">Русский</button>
+                    <button id="lang-btn-en" class="lang-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-lang="en" data-i18n="languages.en">English</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Group: Network & System -->
     <div class="mb-12">
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4">Сеть и система</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-on-surface-variant px-4 mb-4" data-i18n="settings.section_network">Сеть и система</h2>
         <div class="space-y-2">
             <!-- WiFi Only Toggle -->
             <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
@@ -441,8 +464,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-secondary">wifi</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Загрузка только по Wi-Fi</p>
-                        <p class="text-sm text-on-surface-variant">Избегать использования мобильных данных</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.wifi_only_label">Загрузка только по Wi-Fi</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.wifi_only_desc">Избегать использования мобильных данных</p>
                     </div>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -458,8 +481,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-secondary">auto_delete</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Авто-очистка очереди</p>
-                        <p class="text-sm text-on-surface-variant">Удалять задачи после успешной загрузки</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.auto_clear_label">Авто-очистка очереди</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.auto_clear_desc">Удалять задачи после успешной загрузки</p>
                     </div>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -475,15 +498,15 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-primary">cookie</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Источник Cookies</p>
-                        <p class="text-sm text-on-surface-variant">Требуется для 18+ и приватных видео</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.cookies_label">Источник Cookies</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.cookies_desc">Требуется для 18+ и приватных видео</p>
                     </div>
                 </div>
                 <!-- 3-mode toggle -->
                 <div class="flex bg-surface-container-high rounded-full p-1 w-full">
-                    <button id="source-btn-none" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="none">Отключено</button>
-                    <button id="source-btn-file" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="file">Файл</button>
-                    <button id="source-btn-browser" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="browser">Браузер</button>
+                    <button id="source-btn-none" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="none" data-i18n="settings.cookies_disabled">Отключено</button>
+                    <button id="source-btn-file" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="file" data-i18n="settings.cookies_file">Файл</button>
+                    <button id="source-btn-browser" class="source-toggle-btn flex-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300" data-source="browser" data-i18n="settings.cookies_browser">Браузер</button>
                 </div>
             </div>
 
@@ -494,8 +517,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-secondary">description</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Файл Cookies.txt</p>
-                        <p id="cookies-path-text" class="text-sm text-on-surface-variant truncate max-w-[200px] md:max-w-md">Не указан</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.cookies_file_label">Файл Cookies.txt</p>
+                        <p id="cookies-path-text" class="text-sm text-on-surface-variant truncate max-w-[200px] md:max-w-md" data-i18n="settings.cookies_not_specified">Не указан</p>
                     </div>
                 </div>
                 <button id="edit-cookies-btn" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
@@ -510,8 +533,8 @@ tailwind.config = {
                         <span class="material-symbols-outlined text-secondary">language</span>
                     </div>
                     <div>
-                        <p class="font-semibold text-on-surface">Браузер</p>
-                        <p class="text-sm text-on-surface-variant">yt-dlp извлечёт куки напрямую из браузера</p>
+                        <p class="font-semibold text-on-surface" data-i18n="settings.browser_label">Браузер</p>
+                        <p class="text-sm text-on-surface-variant" data-i18n="settings.browser_desc">yt-dlp извлечёт куки напрямую из браузера</p>
                     </div>
                 </div>
                 <div class="relative">
@@ -557,7 +580,7 @@ tailwind.config = {
     <div class="grid grid-cols-1 gap-4">
         <div class="bg-surface-container-lowest p-6 rounded-3xl relative overflow-hidden group">
             <div class="relative z-10 pr-24 md:pr-32">
-                <h3 class="text-xl font-bold mb-2">Дисковое пространство</h3>
+                <h3 class="text-xl font-bold mb-2" data-i18n="settings.storage_title">Дисковое пространство</h3>
                 <div class="flex flex-col mb-4">
                     <span id="storage-used" class="text-3xl font-extrabold text-primary">0 B свободно</span>
                     <span id="storage-folder-info" class="text-sm font-medium text-on-surface-variant opacity-70 mt-1">Папка загрузок: 0 B</span>
@@ -574,19 +597,19 @@ tailwind.config = {
 
     <!-- Footer Info -->
     <div class="mt-16 text-center space-y-2 opacity-50">
-        <p class="text-xs font-bold uppercase tracking-widest">StreamVault v1.0.0</p>
-        <p class="text-xs">Создано для любителей видео</p>
+        <p class="text-xs font-bold uppercase tracking-widest" data-i18n="common.version">StreamVault v1.0.0</p>
+        <p class="text-xs" data-i18n="common.version_footer">Создано для любителей видео</p>
     </div>
 </main>
 
 <!-- Dialog for changing save location -->
 <div id="location-dialog" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
     <div class="bg-surface-container-lowest p-6 rounded-2xl max-w-md w-full mx-4">
-        <h3 class="text-lg font-bold text-on-surface mb-4">Выберите путь сохранения</h3>
+        <h3 class="text-lg font-bold text-on-surface mb-4" data-i18n="settings.save_location_picker_title">Выберите путь сохранения</h3>
         <input id="location-input" type="text" class="w-full bg-surface-container px-4 py-3 rounded-xl border border-outline focus:ring-2 focus:ring-primary focus:border-primary text-on-surface" placeholder="C:\Users\Name\Videos"/>
         <div class="flex justify-end gap-3 mt-4">
-            <button id="cancel-location" class="px-4 py-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">Отмена</button>
-            <button id="save-location" class="px-4 py-2 rounded-full bg-primary text-on-primary font-semibold hover:bg-primary/90 transition-colors">Сохранить</button>
+            <button id="cancel-location" class="px-4 py-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" data-i18n="common.cancel">Отмена</button>
+            <button id="save-location" class="px-4 py-2 rounded-full bg-primary text-on-primary font-semibold hover:bg-primary/90 transition-colors" data-i18n="common.save">Сохранить</button>
         </div>
     </div>
 </div>
@@ -596,17 +619,17 @@ tailwind.config = {
     <div class="bg-surface-container-lowest p-6 rounded-2xl max-w-md w-full mx-4">
         <h3 class="text-lg font-bold text-on-surface mb-2 flex items-center gap-2">
             <span class="material-symbols-outlined text-primary">cookie</span>
-            Файл cookies.txt
+            <span data-i18n="settings.cookies_file_label">Файл cookies.txt</span>
         </h3>
-        <p class="text-sm text-on-surface-variant mb-1">Укажите полный путь к файлу в <strong>формате Netscape</strong> (расширение .txt).</p>
+        <p class="text-sm text-on-surface-variant mb-1" data-i18n="settings.cookies_file_desc">Укажите полный путь к файлу в <strong>формате Netscape</strong> (расширение .txt).</p>
         <div class="flex items-start gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-4">
             <span class="material-symbols-outlined text-amber-500 text-base mt-0.5">warning</span>
-            <p class="text-xs text-amber-600 dark:text-amber-400">Файл базы данных Chrome (<code>Network\Cookies</code>) <strong>не подходит</strong>. Экспортируйте куки через расширение «Get cookies.txt LOCALLY».</p>
+            <p class="text-xs text-amber-600 dark:text-amber-400" data-i18n="settings.cookies_file_warning">Файл базы данных Chrome (<code>Network\Cookies</code>) <strong>не подходит</strong>. Экспортируйте куки через расширение «Get cookies.txt LOCALLY».</p>
         </div>
-        <input id="cookies-input" type="text" class="w-full bg-surface-container px-4 py-3 rounded-xl border border-outline focus:ring-2 focus:ring-primary focus:border-primary text-on-surface" placeholder="C:\Users\Name\cookies.txt"/>
+        <input id="cookies-input" type="text" class="w-full bg-surface-container px-4 py-3 rounded-xl border border-outline focus:ring-2 focus:ring-primary focus:border-primary text-on-surface" data-i18n-placeholder="settings.cookies_input_placeholder" placeholder="C:\Users\Name\cookies.txt"/>
         <div class="flex justify-end gap-3 mt-4">
-            <button id="cancel-cookies" class="px-4 py-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">Отмена</button>
-            <button id="save-cookies" class="px-4 py-2 rounded-full bg-primary text-on-primary font-semibold hover:bg-primary/90 transition-colors">Применить</button>
+            <button id="cancel-cookies" class="px-4 py-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" data-i18n="common.cancel">Отмена</button>
+            <button id="save-cookies" class="px-4 py-2 rounded-full bg-primary text-on-primary font-semibold hover:bg-primary/90 transition-colors" data-i18n="settings.cookies_apply">Применить</button>
         </div>
     </div>
 </div>
@@ -620,11 +643,104 @@ tailwind.config = {
 <script>
 const API_URL = window.location.origin;
 
+// --- i18n ---
+let translations = {};
+let currentLang = 'ru';
+
+function getCachedLang() {
+    return localStorage.getItem('sv_language') || 'ru';
+}
+
+function getCachedTranslations(lang) {
+    try {
+        const data = localStorage.getItem(`sv_i18n_${lang}`);
+        return data ? JSON.parse(data) : null;
+    } catch { return null; }
+}
+
+function cacheTranslations(lang, data) {
+    try {
+        localStorage.setItem(`sv_i18n_${lang}`, JSON.stringify(data));
+    } catch {}
+}
+
+async function loadTranslations(lang) {
+    try {
+        const res = await fetch(`${API_URL}/api/i18n/${lang}`);
+        if (res.ok) {
+            const data = await res.json();
+            cacheTranslations(lang, data);
+            return data;
+        }
+    } catch (e) {
+        console.warn('Failed to fetch translations:', e);
+    }
+    return null;
+}
+
+function t(key, params = {}) {
+    const keys = key.split('.');
+    let val = translations;
+    for (const k of keys) {
+        if (val && typeof val === 'object' && k in val) {
+            val = val[k];
+        } else {
+            return key;
+        }
+    }
+    if (typeof val !== 'string') return key;
+    return val.replace(/\{(\w+)\}/g, (_, p) => params[p] ?? `{${p}}`);
+}
+
+function applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = t(key);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.title = t(key);
+    });
+}
+
+async function initI18n() {
+    currentLang = getCachedLang();
+    const cached = getCachedTranslations(currentLang);
+    if (cached) {
+        translations = cached;
+        applyTranslations();
+    }
+
+    try {
+        const settingsRes = await fetch(`${API_URL}/api/settings`);
+        if (settingsRes.ok) {
+            const settings = await settingsRes.json();
+            const serverLang = settings.language || 'ru';
+            if (serverLang !== currentLang) {
+                currentLang = serverLang;
+                localStorage.setItem('sv_language', serverLang);
+            }
+            const fresh = await loadTranslations(currentLang);
+            if (fresh) {
+                translations = fresh;
+                applyTranslations();
+            }
+        }
+    } catch (e) {
+        // Сервер недоступен
+    }
+}
+
 let currentSettings = null;
 let qualityValue = '1080p';
 let formatValue = 'mp4';
 let cookieSource = 'none';  // 'none' | 'file' | 'browser'
 let browserValue = 'chrome';
+let languageValue = 'ru';
 
 // Dropdown функции
 function setupDropdown(dropdownBtnId, menuId, optionClass, selectedDisplayId, onSelect) {
@@ -703,22 +819,18 @@ function applySettings(settings) {
     formatValue = settings.download_format;
     
     // Обновить отображение dropdown
-    const qualityMap = {
-        'best': 'Лучшее',
-        '1080p': '1080p',
-        '720p': '720p',
-        '480p': '480p',
-        '360p': '360p'
-    };
-    
-    const formatMap = {
-        'mp4': 'MP4',
-        'webm': 'WEBM',
-        'mp3': 'MP3 (аудио)'
-    };
-    
-    document.getElementById('quality-selected').textContent = qualityMap[qualityValue] || qualityValue;
-    document.getElementById('format-selected').textContent = formatMap[formatValue] || formatValue;
+    document.getElementById('quality-selected').textContent = t('settings.quality_best') === 'settings.quality_best' ? qualityValue : t('settings.quality_' + (qualityValue === 'best' ? 'best' : qualityValue));
+    if (qualityValue !== 'best') {
+        document.getElementById('quality-selected').textContent = qualityValue;
+    } else {
+        document.getElementById('quality-selected').textContent = t('settings.quality_best');
+    }
+
+    if (formatValue === 'mp3') {
+        document.getElementById('format-selected').textContent = t('settings.format_mp3');
+    } else {
+        document.getElementById('format-selected').textContent = formatValue.toUpperCase();
+    }
     
     // Обновить check marks
     document.querySelectorAll('.quality-option').forEach(opt => {
@@ -744,7 +856,7 @@ function applySettings(settings) {
     document.getElementById('wifi-only-toggle').checked = settings.wifi_only;
     document.getElementById('auto-clear-toggle').checked = settings.auto_clear_queue;
     document.getElementById('random-filename-toggle').checked = settings.random_filename;
-    document.getElementById('cookies-path-text').textContent = settings.cookies_path || "Не указан";
+    document.getElementById('cookies-path-text').textContent = settings.cookies_path || t('settings.cookies_not_specified');
     
     // SponsorBlock
     const sbToggle = document.getElementById('sponsorblock-toggle');
@@ -780,7 +892,7 @@ function applySettings(settings) {
         'vivaldi': 'Vivaldi'
     };
     document.getElementById('browser-selected').textContent = browserMap[browserValue] || browserValue;
-    
+
     // Update check marks for browser dropdown
     document.querySelectorAll('.browser-option').forEach(opt => {
         const check = opt.querySelector('.material-symbols-outlined');
@@ -790,6 +902,11 @@ function applySettings(settings) {
             check.classList.add('hidden');
         }
     });
+
+    // Language selection
+    languageValue = settings.language || 'ru';
+    updateLanguageUI();
+    applyTranslations();
 
     // Применяем тёмную тему
     if (settings.dark_theme) {
@@ -818,7 +935,8 @@ document.getElementById('save-btn').addEventListener('click', async () => {
         enable_sponsorblock: document.getElementById('sponsorblock-toggle').checked,
         cookies_path: cookieSource === 'none' ? '' : currentSettings.cookies_path,
         use_browser_cookies: cookieSource === 'browser',
-        selected_browser: browserValue
+        selected_browser: browserValue,
+        language: languageValue
     };
 
     try {
@@ -879,7 +997,7 @@ document.getElementById('save-cookies').addEventListener('click', () => {
     // Убираем кавычки
     newPath = newPath.replace(/^["']|["']$/g, '');
     currentSettings.cookies_path = newPath;
-    document.getElementById('cookies-path-text').textContent = newPath || "Не указан (для 18+ и приватных видео)";
+    document.getElementById('cookies-path-text').textContent = newPath || t('settings.cookies_not_specified');
     document.getElementById('cookies-dialog').classList.add('hidden');
     document.getElementById('cookies-dialog').classList.remove('flex');
 });
@@ -942,13 +1060,84 @@ document.querySelectorAll('.source-toggle-btn').forEach(btn => {
         // При переключении на «Отключено» — очищаем путь к файлу
         if (cookieSource === 'none' && currentSettings) {
             currentSettings.cookies_path = '';
-            document.getElementById('cookies-path-text').textContent = 'Не указан';
+            document.getElementById('cookies-path-text').textContent = t('settings.cookies_not_specified');
         }
         updateCookieUI();
     });
 });
 
+// Language toggle
+function updateLanguageUI() {
+    const btnRu = document.getElementById('lang-btn-ru');
+    const btnEn = document.getElementById('lang-btn-en');
+    [btnRu, btnEn].forEach(b => {
+        if (!b) return;
+        b.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        b.classList.add('text-on-surface-variant');
+    });
+    const activeBtn = languageValue === 'en' ? btnEn : btnRu;
+    if (activeBtn) {
+        activeBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        activeBtn.classList.remove('text-on-surface-variant');
+    }
+}
+
+document.querySelectorAll('.lang-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const newLang = btn.dataset.lang;
+        if (newLang !== languageValue) {
+            languageValue = newLang;
+            // Мгновенно сохраняем в localStorage
+            localStorage.setItem('sv_language', newLang);
+            // Сохраняем настройки на сервер
+            saveSettingsAndReload();
+        } else {
+            updateLanguageUI();
+        }
+    });
+});
+
+async function saveSettingsAndReload() {
+    // Если currentSettings ещё не загружен — пробуем загрузить
+    if (!currentSettings) {
+        try {
+            const res = await fetch(`${API_URL}/api/settings`);
+            if (res.ok) currentSettings = await res.json();
+        } catch (e) {
+            console.warn('Failed to load settings before language switch:', e);
+        }
+    }
+
+    const newSettings = {
+        default_quality: qualityValue,
+        download_format: formatValue,
+        save_location: currentSettings?.save_location || '',
+        dark_theme: document.getElementById('dark-theme-toggle')?.checked ?? false,
+        wifi_only: document.getElementById('wifi-only-toggle')?.checked ?? false,
+        auto_clear_queue: document.getElementById('auto-clear-toggle')?.checked ?? false,
+        random_filename: document.getElementById('random-filename-toggle')?.checked ?? false,
+        enable_sponsorblock: document.getElementById('sponsorblock-toggle')?.checked ?? false,
+        cookies_path: cookieSource === 'none' ? '' : (currentSettings?.cookies_path || ''),
+        use_browser_cookies: cookieSource === 'browser',
+        selected_browser: browserValue,
+        language: languageValue
+    };
+
+    try {
+        await fetch(`${API_URL}/api/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ settings: newSettings })
+        });
+    } catch (err) {
+        console.error('Ошибка сохранения:', err);
+    }
+    // Перезагружаем — переводы применятся мгновенно из localStorage
+    window.location.reload();
+}
+
 loadSettings();
+initI18n();
 
 // Загрузка реальных данных хранилища
 async function updateStorageUsage() {
@@ -956,15 +1145,15 @@ async function updateStorageUsage() {
         const response = await fetch(`${API_URL}/api/storage`);
         const storage = await response.json();
         
-        document.getElementById('storage-used').textContent = `${storage.disk_free_formatted} свободно`;
-        document.getElementById('storage-folder-info').textContent = `Папка загрузок: ${storage.folder_size_formatted} (${storage.file_count} файлов)`;
+        document.getElementById('storage-used').textContent = t('settings.storage_free', { value: storage.disk_free_formatted });
+        document.getElementById('storage-folder-info').textContent = t('settings.storage_folder', { size: `${storage.folder_size_formatted} (${t('settings.storage_file_count', { count: storage.file_count })})` });
         
         // Используем реальный процент занятого места на диске
         document.getElementById('storage-bar').style.width = `${storage.disk_used_percent}%`;
     } catch (err) {
         console.error('Ошибка загрузки данных хранилища:', err);
         // Fallback на случай ошибки
-        document.getElementById('storage-used').textContent = '— свободно';
+        document.getElementById('storage-used').textContent = t('settings.storage_free', { value: '—' });
         document.getElementById('storage-bar').style.width = '0%';
     }
 }

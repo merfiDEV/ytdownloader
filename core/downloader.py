@@ -13,6 +13,7 @@ from typing import Optional
 import psutil
 
 from core.config import Settings, load_settings
+from core.i18n import t
 from core.history import history_manager
 
 
@@ -190,7 +191,7 @@ class DownloadManager:
         """Добавить новую задачу загрузки."""
         settings = load_settings()
 
-        task = DownloadTask(url=url, title="Загрузка метаданных...")
+        task = DownloadTask(url=url, title=t("status.loading_metadata", lang=settings.language))
         self.tasks[task.id] = task
 
         asyncio.create_task(self._run_download(task, settings))
@@ -280,7 +281,11 @@ class DownloadManager:
 
                     # Формат не совпадает с желаемым (не для mp3, так как mp3 конвертируется)
                     if desired_format != "mp3" and actual_ext and actual_ext != desired_format:
-                        task.format_warning = f"Формат {actual_ext.upper()} вместо {desired_format.upper()}"
+                        task.format_warning = t(
+                            "notifications.format_mismatch",
+                            lang=settings.language,
+                            params={"actual": actual_ext.upper(), "desired": desired_format.upper()}
+                        )
                 except (json.JSONDecodeError, UnicodeDecodeError):
                     task.title = task.url
             else:

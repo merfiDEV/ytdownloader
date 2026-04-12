@@ -11,13 +11,31 @@ from pathlib import Path
 import uvicorn
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from core.config import Settings, load_settings, save_settings, ensure_save_location
 from core.downloader import download_manager, DownloadStatus
 from core.history import history_manager, HistoryRecord
+
+
+# --- i18n (интернационализация) ---
+
+_i18n_cache: dict[str, dict] = {}
+
+
+def _load_locale(locale: str) -> dict | None:
+    """Загрузить JSON-файл перевода для указанного языка."""
+    if locale in _i18n_cache:
+        return _i18n_cache[locale]
+    locale_file = Path(__file__).parent / "locales" / f"{locale}.json"
+    if not locale_file.exists():
+        return None
+    with open(locale_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    _i18n_cache[locale] = data
+    return data
 
 
 # --- Модели запросов/ответов ---
@@ -130,6 +148,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# --- i18n API ---
+
+@app.get("/api/i18n/{lang}")
+async def get_translations(lang: str):
+    """Отдать переводы для указанного языка."""
+    data = _load_locale(lang)
+    if data is None:
+        return JSONResponse(status_code=404, content={"error": "Locale not found"})
+    return data
 
 
 # --- API Endpoints ---
