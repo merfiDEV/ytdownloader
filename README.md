@@ -166,6 +166,24 @@ ytdownloader/
 
 ---
 
+## 📦 Build to EXE
+
+```bash
+python build.py
+```
+The executable will be located in `dist/StreamVault.exe`.
+
+---
+
+## 📦 Сборка в EXE
+
+```bash
+python build.py
+```
+Готовый файл появится в `dist/StreamVault.exe`.
+
+---
+
 <div align="center">
 
 Сделано с ❤️ для любителей видео · [merfiDEV](https://github.com/merfiDEV)

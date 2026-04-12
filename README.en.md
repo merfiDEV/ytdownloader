@@ -166,6 +166,15 @@ Distributed under the **MIT** License. See [LICENSE](LICENSE) for details.
 
 ---
 
+## 📦 Build to EXE
+
+```bash
+python build.py
+```
+The executable will be located in `dist/StreamVault.exe`.
+
+---
+
 <div align="center">
 
 Made with ❤️ for video lovers · [merfiDEV](https://github.com/merfiDEV)

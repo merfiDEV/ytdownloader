@@ -6,8 +6,10 @@ from pathlib import Path
 from pydantic import BaseModel
 from typing import List, Optional
 
+from core.utils import get_data_path
+
 # Файл БД будет там же, где config.json
-DB_PATH = Path(__file__).parent.parent / "history.db"
+DB_PATH = get_data_path("history.db")
 
 class HistoryRecord(BaseModel):
     id: str

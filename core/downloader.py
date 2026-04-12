@@ -15,6 +15,7 @@ import psutil
 from core.config import Settings, load_settings
 from core.i18n import t
 from core.history import history_manager
+from core.utils import get_resource_path
 
 
 class DownloadStatus(str, Enum):
@@ -68,7 +69,7 @@ class DownloadManager:
 
     def __init__(self):
         self.tasks: dict[str, DownloadTask] = {}
-        self.ytdlp_path = Path(__file__).parent.parent / "yt-dlp.exe"
+        self.ytdlp_path = get_resource_path("yt-dlp.exe")
 
     def _get_cookie_args(self, settings: Settings) -> list[str]:
         """Получить аргументы для куки на основе настроек."""

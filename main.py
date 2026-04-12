@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from core.config import Settings, load_settings, save_settings, ensure_save_location
 from core.downloader import download_manager, DownloadStatus
 from core.history import history_manager, HistoryRecord
+from core.utils import get_resource_path
 
 
 # --- i18n (интернационализация) ---
@@ -29,7 +30,7 @@ def _load_locale(locale: str) -> dict | None:
     """Загрузить JSON-файл перевода для указанного языка."""
     if locale in _i18n_cache:
         return _i18n_cache[locale]
-    locale_file = Path(__file__).parent / "locales" / f"{locale}.json"
+    locale_file = get_resource_path("locales") / f"{locale}.json"
     if not locale_file.exists():
         return None
     with open(locale_file, "r", encoding="utf-8") as f:
@@ -383,7 +384,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 # --- Статика и UI ---
 
-UI_DIR = Path(__file__).parent / "ui"
+UI_DIR = get_resource_path("ui")
 
 
 @app.get("/")

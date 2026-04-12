@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 from pydantic import BaseModel
+from core.utils import get_data_path
 
 
 class Settings(BaseModel):
@@ -22,7 +23,7 @@ class Settings(BaseModel):
     language: str = "ru"
 
 
-CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+CONFIG_PATH = get_data_path("config.json")
 
 
 def load_settings() -> Settings:

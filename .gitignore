@@ -21,3 +21,9 @@ history.db
 
 # Personal settings and actions
 config.json
+
+# Build and IDE artifacts
+build/
+dist/
+*.spec
+.pytest_cache/
