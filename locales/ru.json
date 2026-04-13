@@ -22,7 +22,7 @@
     "pause": "Приостановить"
   },
   "main": {
-    "url_placeholder": "Вставьте URL видео или плейлиста...",
+    "url_placeholder": "Вставьте URL или ?запрос для поиска...",
     "download_btn": "Скачать",
     "download_btn_checking": "Проверка...",
     "download_btn_downloading": "Загрузка...",
@@ -35,7 +35,16 @@
     "deselect_all": "Снять все",
     "download_selected": "Скачать ({count})",
     "downloading_playlist": "Добавление...",
-    "video_label": "Видео #{index}"
+    "video_label": "Видео #{index}",
+    "search_placeholder_hint": "Начните с ? для поиска (например: ?Игры)",
+    "search_btn": "Найти",
+    "search_btn_searching": "Поиск...",
+    "search_title": "Результаты поиска",
+    "search_results_count": "{count} результатов по запросу «{query}»",
+    "search_no_results": "Ничего не найдено по запросу «{query}»",
+    "search_duration": "{duration}",
+    "search_views": "{count} просмотров",
+    "search_download_selected": "Скачать выбранные ({count})"
   },
   "settings": {
     "page_title": "Настройки",

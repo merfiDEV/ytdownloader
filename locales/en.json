@@ -22,7 +22,7 @@
     "pause": "Pause"
   },
   "main": {
-    "url_placeholder": "Paste video or playlist URL...",
+    "url_placeholder": "Paste URL or ?query to search...",
     "download_btn": "Download",
     "download_btn_checking": "Checking...",
     "download_btn_downloading": "Downloading...",
@@ -35,7 +35,16 @@
     "deselect_all": "Deselect all",
     "download_selected": "Download ({count})",
     "downloading_playlist": "Adding...",
-    "video_label": "Video #{index}"
+    "video_label": "Video #{index}",
+    "search_placeholder_hint": "Start with ? to search (e.g. ?Games)",
+    "search_btn": "Search",
+    "search_btn_searching": "Searching...",
+    "search_title": "Search Results",
+    "search_results_count": "{count} results for \"{query}\"",
+    "search_no_results": "No results found for \"{query}\"",
+    "search_duration": "{duration}",
+    "search_views": "{count} views",
+    "search_download_selected": "Download selected ({count})"
   },
   "settings": {
     "page_title": "Settings",

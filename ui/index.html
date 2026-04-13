@@ -309,7 +309,7 @@ tailwind.config = {
         <div id="url-input-container" class="relative flex flex-col md:flex-row gap-4 p-3 bg-surface-container-lowest rounded-[2rem] shadow-sm border border-surface-container transition-all duration-300">
             <div class="flex-1 flex items-center px-4 gap-4">
                 <span class="material-symbols-outlined text-primary">link</span>
-                <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container" data-i18n-placeholder="main.url_placeholder" placeholder="Вставьте URL видео или плейлиста..." type="text"/>
+                <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container" data-i18n-placeholder="main.url_placeholder" placeholder="Вставьте URL или ?запрос для поиска..." type="text"/>
             </div>
             <button id="download-btn" class="signature-gradient text-on-primary px-10 py-4 rounded-full font-headline font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="main.download_btn">
                 Скачать
@@ -327,7 +327,7 @@ tailwind.config = {
                 <div id="empty-state" class="text-center py-12 text-on-secondary-container">
                     <span class="material-symbols-outlined text-6xl mb-4 opacity-50">download</span>
                     <p class="text-lg" data-i18n="main.no_downloads">Нет активных загрузок</p>
-                    <p class="text-sm mt-2" data-i18n="main.no_downloads_hint">Вставьте URL выше чтобы начать загрузку</p>
+                    <p class="text-sm mt-2" data-i18n="main.search_placeholder_hint">Начните с ? для поиска (например: ?Игры)</p>
                 </div>
             </div>
         </section>
@@ -463,10 +463,31 @@ urlInputContainer.addEventListener('drop', (e) => {
     const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('url');
     if (url) {
         urlInput.value = url;
-        // Можно имитировать клик по кнопке, но лучше просто заполнить
-        // downloadBtn.click(); 
+        updateButtonMode();
     }
 });
+
+// --- Режим кнопки: Скачать / Найти ---
+let isSearchMode = false;
+
+function updateButtonMode() {
+    const val = urlInput.value.trim();
+    const wasSearch = isSearchMode;
+    isSearchMode = val.startsWith('?');
+    if (isSearchMode !== wasSearch) {
+        if (isSearchMode) {
+            downloadBtn.textContent = t('main.search_btn');
+            downloadBtn.classList.remove('signature-gradient');
+            downloadBtn.classList.add('bg-tertiary');
+        } else {
+            downloadBtn.textContent = t('main.download_btn');
+            downloadBtn.classList.add('signature-gradient');
+            downloadBtn.classList.remove('bg-tertiary');
+        }
+    }
+}
+
+urlInput.addEventListener('input', updateButtonMode);
 
 // WebSocket подключение
 let ws = null;
@@ -493,10 +514,52 @@ function connectWebSocket() {
 let currentPlaylistUrl = '';
 let playlistEntries = [];
 let selectedIndices = new Set();
+let searchResults = [];    // результаты поиска
+let isSearchDialog = false; // true = диалог показывает поиск, false = плейлист
 
 downloadBtn.addEventListener('click', async () => {
-    const url = urlInput.value.trim();
-    if (!url) return;
+    const raw = urlInput.value.trim();
+    if (!raw) return;
+
+    // === РЕЖИМ ПОИСКА ===
+    if (raw.startsWith('?')) {
+        const query = raw.substring(1).trim();
+        if (!query) return;
+
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = t('main.search_btn_searching');
+
+        try {
+            const response = await fetch(`${API_URL}/api/search`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, limit: 10 })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                showToast(data.error);
+            } else if (data.results && data.results.length > 0) {
+                searchResults = data.results;
+                selectedIndices = new Set();
+                isSearchDialog = true;
+                showSearchDialog(data);
+            } else {
+                showToast(t('main.search_no_results', { query }));
+            }
+        } catch (err) {
+            console.error('Search error:', err);
+            showToast('Search error');
+        } finally {
+            downloadBtn.disabled = false;
+            downloadBtn.textContent = t('main.search_btn');
+        }
+        return;
+    }
+
+    // === РЕЖИМ ЗАГРУЗКИ (оригинальная логика) ===
+    const url = raw;
 
     // Проверка на корректность YouTube ссылки
     if (!isValidYoutubeUrl(url)) {
@@ -534,6 +597,7 @@ downloadBtn.addEventListener('click', async () => {
             currentPlaylistUrl = url;
             playlistEntries = data.entries;
             selectedIndices = new Set();
+            isSearchDialog = false;
             showPlaylistDialog(data);
         } else {
             // Одно видео (или ошибка детекции) — скачиваем напрямую
@@ -548,6 +612,57 @@ downloadBtn.addEventListener('click', async () => {
         settingsLink.classList.remove('pointer-events-none', 'opacity-50');
     }
 });
+
+// --- ПОИСК: показать диалог результатов ---
+function showSearchDialog(data) {
+    const dialog = document.getElementById('playlist-dialog');
+    const title = document.getElementById('playlist-title');
+    const count = document.getElementById('playlist-count');
+
+    title.textContent = t('main.search_title');
+    count.textContent = t('main.search_results_count', { count: data.count, query: data.query });
+
+    renderSearchResults(data.results);
+    updateSearchDownloadButton();
+
+    dialog.classList.remove('hidden');
+    dialog.classList.add('flex');
+}
+
+function formatViewCount(count) {
+    if (!count) return '';
+    if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M';
+    if (count >= 1000) return (count / 1000).toFixed(1) + 'K';
+    return String(count);
+}
+
+function renderSearchResults(results) {
+    const container = document.getElementById('playlist-videos');
+
+    container.innerHTML = results.map(entry => `
+        <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors group">
+            <input type="checkbox" class="playlist-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-2 bg-surface-container-high shrink-0" data-index="${entry.index}" onchange="toggleVideoSelection(${entry.index}, this.checked)">
+            <div class="relative shrink-0">
+                <img src="${entry.thumbnail}" alt="" class="w-24 h-16 object-cover rounded-lg bg-surface-container-high" loading="lazy" onerror="this.style.display='none'">
+                ${entry.duration ? `<span class="absolute bottom-1 right-1 bg-black/80 text-white text-[10px] px-1 rounded font-mono">${entry.duration}</span>` : ''}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-on-surface line-clamp-2">${escapeHtml(entry.title)}</p>
+                <div class="flex items-center gap-2 mt-1">
+                    ${entry.channel ? `<span class="text-xs text-on-surface-variant truncate">${escapeHtml(entry.channel)}</span>` : ''}
+                    ${entry.view_count ? `<span class="text-xs text-on-surface-variant">• ${formatViewCount(entry.view_count)} views</span>` : ''}
+                </div>
+            </div>
+            <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity text-[20px] shrink-0">play_circle</span>
+        </label>
+    `).join('');
+}
+
+function updateSearchDownloadButton() {
+    const btn = document.getElementById('playlist-download-btn');
+    btn.textContent = t('main.search_download_selected', { count: selectedIndices.size });
+    btn.disabled = selectedIndices.size === 0;
+}
 
 /**
  * Возвращает true если это корректная ссылка на YouTube.
@@ -622,8 +737,6 @@ function showPlaylistDialog(data) {
     const dialog = document.getElementById('playlist-dialog');
     const title = document.getElementById('playlist-title');
     const count = document.getElementById('playlist-count');
-    const videosContainer = document.getElementById('playlist-videos');
-    const downloadBtn = document.getElementById('playlist-download-btn');
 
     title.textContent = data.title;
     count.textContent = t('main.videos_count', { count: data.entries.length });
@@ -657,7 +770,11 @@ window.toggleVideoSelection = function(index, checked) {
     } else {
         selectedIndices.delete(index);
     }
-    updateDownloadButton();
+    if (isSearchDialog) {
+        updateSearchDownloadButton();
+    } else {
+        updateDownloadButton();
+    }
 }
 
 function updateDownloadButton() {
@@ -678,24 +795,27 @@ function closePlaylistDialog() {
     dialog.classList.remove('flex');
     currentPlaylistUrl = '';
     playlistEntries = [];
+    searchResults = [];
     selectedIndices = new Set();
+    isSearchDialog = false;
 }
 
 // Выбрать все
 document.getElementById('select-all-btn').addEventListener('click', () => {
-    playlistEntries.forEach(entry => selectedIndices.add(entry.index));
+    const entries = isSearchDialog ? searchResults : playlistEntries;
+    entries.forEach(entry => selectedIndices.add(entry.index));
     document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = true);
-    updateDownloadButton();
+    if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
 });
 
 // Снять все
 document.getElementById('deselect-all-btn').addEventListener('click', () => {
     selectedIndices.clear();
     document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = false);
-    updateDownloadButton();
+    if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
 });
 
-// Скачать выбранные
+// Скачать выбранные (плейлист ИЛИ результаты поиска)
 document.getElementById('playlist-download-btn').addEventListener('click', async () => {
     if (selectedIndices.size === 0) return;
 
@@ -704,21 +824,41 @@ document.getElementById('playlist-download-btn').addEventListener('click', async
     btn.textContent = t('main.downloading_playlist');
 
     try {
-        const response = await fetch(`${API_URL}/api/playlist/download`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: currentPlaylistUrl, selected_indices: Array.from(selectedIndices) })
-        });
-
-        if (response.ok) {
+        if (isSearchDialog) {
+            // === Загрузка из результатов поиска ===
+            for (const idx of selectedIndices) {
+                const entry = searchResults.find(e => e.index === idx);
+                if (entry && entry.url) {
+                    await fetch(`${API_URL}/api/download`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: entry.url })
+                    });
+                }
+            }
             urlInput.value = '';
+            updateButtonMode();
             closePlaylistDialog();
+        } else {
+            // === Загрузка из плейлиста (оригинальная логика) ===
+            const response = await fetch(`${API_URL}/api/playlist/download`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: currentPlaylistUrl, selected_indices: Array.from(selectedIndices) })
+            });
+
+            if (response.ok) {
+                urlInput.value = '';
+                updateButtonMode();
+                closePlaylistDialog();
+            }
         }
     } catch (err) {
-        console.error('Ошибка при загрузке плейлиста:', err);
+        console.error('Ошибка при загрузке:', err);
     } finally {
         btn.disabled = false;
-        btn.textContent = t('main.download_selected', { count: selectedIndices.size });
+        const countKey = isSearchDialog ? 'main.search_download_selected' : 'main.download_selected';
+        btn.textContent = t(countKey, { count: selectedIndices.size });
     }
 });
 

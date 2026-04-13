@@ -50,6 +50,11 @@ class PlaylistDownloadRequest(BaseModel):
     selected_indices: list[int]
 
 
+class SearchRequest(BaseModel):
+    query: str
+    limit: int = 10
+
+
 class SettingsRequest(BaseModel):
     settings: Settings
 
@@ -160,6 +165,15 @@ async def get_translations(lang: str):
     if data is None:
         return JSONResponse(status_code=404, content={"error": "Locale not found"})
     return data
+
+
+# --- Search API ---
+
+@app.post("/api/search")
+async def search_videos(request: SearchRequest):
+    """Поиск видео на YouTube через yt-dlp."""
+    result = await download_manager.search_videos(request.query, request.limit)
+    return result
 
 
 # --- API Endpoints ---

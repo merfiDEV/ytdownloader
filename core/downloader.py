@@ -513,6 +513,82 @@ class DownloadManager:
             return True
         return False
 
+    async def search_videos(self, query: str, limit: int = 10) -> dict:
+        """Поиск видео на YouTube через yt-dlp."""
+        if not self.ytdlp_path.exists():
+            return {"error": "yt-dlp.exe not found"}
+
+        try:
+            settings = load_settings()
+            cmd = [
+                str(self.ytdlp_path),
+                "-j",
+                "--flat-playlist",
+                "--no-warnings",
+                f"ytsearch{limit}:{query}",
+            ]
+
+            cmd.extend(self._get_cookie_args(settings))
+
+            proc = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+
+            if proc.returncode != 0:
+                error_text = stderr.decode("utf-8", errors="replace")[:200]
+                return {"error": error_text or "Search failed"}
+
+            lines = stdout.decode("utf-8", errors="replace").strip().split("\n")
+            results = []
+
+            for line in lines:
+                if not line.strip():
+                    continue
+                try:
+                    info = json.loads(line)
+                    video_id = info.get("id", "")
+                    video_url = info.get("url") or info.get("webpage_url") or (
+                        f"https://www.youtube.com/watch?v={video_id}" if video_id else ""
+                    )
+
+                    # Форматируем длительность
+                    duration_secs = info.get("duration") or 0
+                    if duration_secs:
+                        mins, secs = divmod(int(duration_secs), 60)
+                        hours, mins = divmod(mins, 60)
+                        if hours > 0:
+                            duration_str = f"{hours}:{mins:02}:{secs:02}"
+                        else:
+                            duration_str = f"{mins}:{secs:02}"
+                    else:
+                        duration_str = ""
+
+                    results.append({
+                        "id": video_id,
+                        "url": video_url,
+                        "title": info.get("title", f"Video {len(results) + 1}"),
+                        "thumbnail": info.get("thumbnail") or (
+                            f"https://i.ytimg.com/vi/{video_id}/mqdefault.jpg" if video_id else ""
+                        ),
+                        "duration": duration_str,
+                        "channel": info.get("channel") or info.get("uploader") or "",
+                        "view_count": info.get("view_count") or 0,
+                        "index": len(results) + 1,
+                    })
+                except (json.JSONDecodeError, KeyError):
+                    continue
+
+            return {
+                "query": query,
+                "results": results,
+                "count": len(results),
+            }
+        except Exception as e:
+            return {"error": str(e)[:200]}
+
     def get_active_count(self) -> int:
         """Получить количество активных загрузок."""
         return sum(1 for t in self.tasks.values() if t.status in (
