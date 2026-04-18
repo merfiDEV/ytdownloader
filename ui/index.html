@@ -140,6 +140,7 @@ tailwind.config = {
     --on-tertiary-fixed: #001a40;
     --tertiary-fixed-dim: #acc7ff;
     --on-tertiary-fixed-variant: #004491;
+    --primary-rgb: 188, 1, 0;
 }
 
 :root.dark {
@@ -190,6 +191,7 @@ tailwind.config = {
     --on-tertiary-fixed: #001a40;
     --tertiary-fixed-dim: #acc7ff;
     --on-tertiary-fixed-variant: #004491;
+    --primary-rgb: 255, 180, 168;
 }
 
 .material-symbols-outlined {
@@ -254,6 +256,58 @@ tailwind.config = {
     display: flex;
     gap: 1.5rem;
     box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08);
+}
+.live-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1.5px solid var(--surface-container);
+    position: relative;
+    overflow: hidden;
+}
+.live-card:hover {
+    border-color: var(--outline-variant);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
+}
+.live-card.active {
+    border-color: var(--primary-container);
+    background: var(--surface-container-lowest);
+}
+.progress-container-premium {
+    height: 8px;
+    background: var(--surface-container-high);
+    border-radius: 99px;
+    overflow: hidden;
+    position: relative;
+}
+.progress-fill-premium {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-container) 100%);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+.progress-fill-premium::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite linear;
+}
+@keyframes pulse-glow {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(var(--primary-rgb), 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
+}
+.animate-pulse-glow {
+    animation: pulse-glow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+.metrics-badge {
+    background: var(--surface-container-high);
+    color: var(--on-surface-variant);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: ui-monospace, monospace;
 }
 @media (max-width: 640px) {
     .preview-card {
@@ -1068,81 +1122,106 @@ function renderDownloads(tasks) {
     
     emptyState.style.display = 'none';
     downloadsList.innerHTML = tasks.map(task => {
-        const statusText = getStatusText(task.status);
-        const statusColor = getStatusColor(task.status);
-        const progressBarColor = getProgressBarColor(task.status);
+        const isDownloading = task.status === 'downloading';
+        const isProcessing = task.status === 'processing';
+        const isError = task.status === 'error';
+        const isCompleted = task.status === 'completed';
+        const isPaused = task.status === 'paused';
+        
+        const statusKey = task.detailed_status || task.status;
+        const statusText = t(`status.${statusKey}`);
+        
+        let statusColor = 'text-primary';
+        if (isCompleted) statusColor = 'text-green-600 dark:text-green-400';
+        if (isError) statusColor = 'text-error';
+        if (isPaused) statusColor = 'text-secondary';
+        
         const showActions = showActionButtons(task.status);
-        const canRetry = task.status === 'error';
-        const canOpenFile = task.status === 'completed' && task.file_path;
-        const canCopyLog = task.status === 'error';
+        const canOpenFile = isCompleted && task.file_path;
         
         return `
-        <div class="bg-surface-container-low p-4 rounded-2xl border border-surface-container flex gap-4 group hover:border-outline-variant transition-colors ${task.status === 'completed' ? 'opacity-60' : ''}">
-            <!-- Thumbnail -->
-            ${task.thumbnail ? `
-            <img src="${task.thumbnail}" alt="" class="w-24 h-16 object-cover rounded-lg bg-surface-container-high shrink-0" loading="lazy" onerror="this.style.display='none'">
-            ` : ''}
-            <!-- Info -->
-            <div class="flex-1 min-w-0 flex flex-col justify-between">
+        <div class="live-card bg-surface-container-low p-5 rounded-[2rem] flex flex-col sm:flex-row gap-5 ${isDownloading || isProcessing ? 'active' : ''} ${isCompleted ? 'opacity-75' : ''}">
+            <!-- Thumbnail with pulse effect if active -->
+            <div class="relative shrink-0 flex items-center justify-center">
+                <img src="${task.thumbnail || 'https://i.ytimg.com/vi/placeholder/mqdefault.jpg'}" 
+                     class="w-full sm:w-40 aspect-video object-cover rounded-2xl bg-surface-container-high shadow-sm ${isDownloading ? 'animate-pulse-glow' : ''}" 
+                     alt="" onerror="this.src='https://i.ytimg.com/vi/placeholder/mqdefault.jpg'">
+                ${isCompleted ? `
+                <div class="absolute inset-0 bg-green-500/10 backdrop-blur-[1px] rounded-2xl flex items-center justify-center">
+                    <span class="material-symbols-outlined text-green-600 bg-white/90 rounded-full p-1 shadow-sm">check_circle</span>
+                </div>
+                ` : ''}
+            </div>
+
+            <div class="flex-1 min-w-0 flex flex-col gap-3">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-on-surface truncate">${escapeHtml(task.title || t('status.preparing'))}</h3>
-                        <p class="text-sm text-secondary mt-1">${formatBytes(task.downloaded_bytes)} / ${formatBytes(task.total_bytes)} • <span class="${statusColor} font-medium italic">${statusText}</span></p>
-                        ${task.speed ? `<p class="text-xs text-secondary mt-0.5">${task.speed} • ETA: ${task.eta}</p>` : ''}
-                    </div>
-                    <div class="flex gap-1 shrink-0">
-                        ${showActions ? `
-                            ${task.status === 'paused' ? `
-                            <button onclick="resumeTask('${task.id}')" class="text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="${t('common.resume')}">
-                                <span class="material-symbols-outlined text-[20px]">play_arrow</span>
-                            </button>
+                        <h3 class="text-lg font-bold text-on-surface truncate leading-tight">${escapeHtml(task.title || t('status.preparing'))}</h3>
+                        <div class="flex flex-wrap items-center gap-2 mt-1">
+                            <span class="${statusColor} text-sm font-bold flex items-center gap-1.5">
+                                ${isDownloading || isProcessing ? '<span class="w-2 h-2 bg-current rounded-full animate-ping"></span>' : ''}
+                                ${statusText}
+                            </span>
+                            ${task.speed ? `
+                            <div class="flex gap-1.5">
+                                <span class="metrics-badge flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">speed</span>
+                                    ${task.speed}
+                                </span>
+                                <span class="metrics-badge flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                    ${task.eta}
+                                </span>
+                            </div>
                             ` : ''}
-                            ${task.status === 'downloading' ? `
-                            <button onclick="pauseTask('${task.id}')" class="text-on-secondary-container hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="${t('common.pause')}">
-                                <span class="material-symbols-outlined text-[20px]">pause</span>
-                            </button>
-                            ` : ''}
-                            <button onclick="cancelTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="${t('common.cancel')}">
-                                <span class="material-symbols-outlined text-[20px]">close</span>
-                            </button>
-                        ` : `
-                            <button onclick="openFolder('${task.id}')" class="text-on-secondary-container hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors" title="${t('common.open_folder')}">
-                                <span class="material-symbols-outlined text-[20px]">folder_open</span>
-                            </button>
-                            <button onclick="removeTask('${task.id}')" class="text-on-secondary-container hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors" title="${t('common.delete')}">
-                                <span class="material-symbols-outlined text-[20px]">delete</span>
-                            </button>
-                        `}
+                        </div>
                     </div>
                 </div>
-                <div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden mt-2">
-                    <div class="${progressBarColor} h-full rounded-full transition-all duration-500" style="width: ${task.progress}%"></div>
-                </div>
-                ${task.error_message ? `<p class="text-xs text-error mt-1">${escapeHtml(task.error_message)}</p>` : ''}
-                ${task.error_help ? `<p class="text-xs text-on-surface-variant mt-1">${escapeHtml(task.error_help)}</p>` : ''}
 
-                <div class="flex flex-wrap gap-2 mt-3">
-                    ${canOpenFile ? `
-                    <button onclick="openFileByTask('${task.id}')" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[18px]">open_in_new</span> ${t('common.open_file')}
-                    </button>
-                    ` : ''}
-                    <button onclick="openFolderByTask('${task.id}')" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[18px]">folder_open</span> ${t('common.open_folder')}
-                    </button>
-                    <button onclick="copyUrlByTask('${task.id}')" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[18px]">content_copy</span> ${t('common.copy_url')}
-                    </button>
-                    ${canRetry ? `
-                    <button onclick="retryTask('${task.id}')" class="px-3 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary/90 transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[18px]">refresh</span> ${t('common.retry')}
-                    </button>
-                    ` : ''}
-                    ${canCopyLog ? `
-                    <button onclick="copyLog('${task.id}')" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-xs font-semibold transition-colors flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[18px]">terminal</span> ${t('common.copy_log')}
-                    </button>
-                    ` : ''}
+                <!-- Progress Section -->
+                <div class="mt-auto">
+                    <div class="flex justify-between text-xs font-bold text-on-surface-variant mb-1.5 px-0.5">
+                        <span>${isError ? `<span class="text-error">${escapeHtml(task.error_message)}</span>` : formatBytes(task.downloaded_bytes) + ' / ' + formatBytes(task.total_bytes)}</span>
+                        <span>${task.progress}%</span>
+                    </div>
+                    <div class="progress-container-premium">
+                        <div class="progress-fill-premium shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]" style="width: ${task.progress}%"></div>
+                    </div>
+                </div>
+
+                <!-- Actions Bar -->
+                <div class="flex flex-wrap items-center justify-between gap-2 mt-1">
+                    <div class="flex gap-1">
+                        ${isPaused ? `
+                        <button onclick="resumeTask('${task.id}')" class="bg-primary/10 text-primary hover:bg-primary/20 p-2 rounded-xl transition-colors">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                        </button>
+                        ` : ''}
+                        ${isDownloading ? `
+                        <button onclick="pauseTask('${task.id}')" class="bg-secondary/10 text-secondary hover:bg-secondary/20 p-2 rounded-xl transition-colors">
+                            <span class="material-symbols-outlined">pause</span>
+                        </button>
+                        ` : ''}
+                        ${showActions && !isCompleted ? `
+                        <button onclick="cancelTask('${task.id}')" class="bg-error/10 text-error hover:bg-error/20 p-2 rounded-xl transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                        ` : ''}
+                        <button onclick="removeTask('${task.id}')" class="bg-on-surface-variant/5 text-on-surface-variant hover:bg-on-surface-variant/10 p-2 rounded-xl transition-colors" title="${t('common.delete')}">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-1">
+                        ${canOpenFile ? `
+                        <button onclick="openFileByTask('${task.id}')" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-bold transition-all flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[18px]">file_open</span> ${t('common.open_file')}
+                        </button>
+                        ` : ''}
+                        <button onclick="openFolderByTask('${task.id}')" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-bold transition-all flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[18px]">folder_open</span> ${t('common.open_folder')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

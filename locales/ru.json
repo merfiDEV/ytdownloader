@@ -127,7 +127,12 @@
     "error": "Ошибка",
     "cancelled": "Отменено",
     "queued": "В очереди",
-    "preparing": "Подготовка..."
+    "preparing": "Подготовка...",
+    "merging": "Объединение форматов...",
+    "extracting": "Извлечение аудио...",
+    "post_processing": "Постобработка...",
+    "sponsorblock": "Удаление спонсорских сегментов...",
+    "fixing": "Исправление файла..."
   },
   "notifications": {
     "format_mismatch": "Формат {actual} вместо {desired}",

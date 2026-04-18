@@ -127,7 +127,12 @@
     "error": "Error",
     "cancelled": "Cancelled",
     "queued": "Queued",
-    "preparing": "Preparing..."
+    "preparing": "Preparing...",
+    "merging": "Merging formats...",
+    "extracting": "Extracting audio...",
+    "post_processing": "Post-processing...",
+    "sponsorblock": "Removing sponsored segments...",
+    "fixing": "Fixing file..."
   },
   "notifications": {
     "format_mismatch": "Format {actual} instead of {desired}",

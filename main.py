@@ -75,6 +75,7 @@ class TaskResponse(BaseModel):
     error_code: str = ""
     error_help: str = ""
     thumbnail: str = ""
+    detailed_status: str = ""
     resumed: bool = False
     log_file: str = ""
     file_path: str = ""

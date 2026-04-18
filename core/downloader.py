@@ -46,6 +46,7 @@ class DownloadTask:
         self.error_help = ""
         self.format_warning = ""
         self.thumbnail = ""
+        self.detailed_status = ""
         self.file_path: str = ""
         self.resumed = False
         self.removed = False
@@ -69,6 +70,7 @@ class DownloadTask:
             "log_file": self.log_file,
             "format_warning": self.format_warning,
             "thumbnail": self.thumbnail,
+            "detailed_status": self.detailed_status,
             "file_path": self.file_path,
             "resumed": self.resumed,
         }
@@ -519,6 +521,19 @@ class DownloadManager:
 
             stderr_task = asyncio.create_task(self._consume_stderr(task))
 
+            # Теги для отслеживания детального статуса
+            status_tags = {
+                "[ExtractAudio]": "extracting",
+                "[Merger]": "merging",
+                "[SponsorBlock]": "sponsorblock",
+                "[FixupM3u8]": "fixing",
+                "[Metadata]": "post_processing",
+                "[EmbedSubtitle]": "post_processing",
+                "[EmbedThumbnail]": "post_processing",
+                "[ThumbnailsConvertor]": "post_processing",
+                "[VideoRemuxer]": "merging",
+            }
+
             while True:
                 if task.status == DownloadStatus.PAUSED:
                     await asyncio.sleep(1)
@@ -531,6 +546,12 @@ class DownloadManager:
                 text = line.decode("utf-8", errors="replace").strip()
                 if text:
                     self._append_log(task, text)
+                    
+                    # Парсим детальный статус из тегов yt-dlp
+                    for tag, status_key in status_tags.items():
+                        if text.startswith(tag):
+                            task.detailed_status = status_key
+                            break
 
                 parts = text.split()
                 if len(parts) >= 5:
