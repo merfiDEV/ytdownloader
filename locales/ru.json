@@ -48,7 +48,12 @@
     "search_no_results": "Ничего не найдено по запросу «{query}»",
     "search_duration": "{duration}",
     "search_views": "{count} просмотров",
-    "search_download_selected": "Скачать выбранные ({count})"
+    "search_download_selected": "Скачать выбранные ({count})",
+    "preview_type_video": "Видео",
+    "preview_type_playlist": "Плейлист",
+    "preview_type_short": "Shorts",
+    "preview_quality": "Качество: {quality}",
+    "preview_views": "{count} просмотров"
   },
   "settings": {
     "page_title": "Настройки",

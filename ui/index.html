@@ -235,6 +235,72 @@ tailwind.config = {
     background-color: var(--surface-container-low) !important;
     transform: scale(1.01);
 }
+#hero-preview {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+#hero-preview.show {
+    max-height: 600px;
+    opacity: 1;
+    margin-bottom: 2rem;
+}
+.preview-card {
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--outline-variant);
+    border-radius: 2.5rem;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1.5rem;
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08);
+}
+@media (max-width: 640px) {
+    .preview-card {
+        flex-direction: column;
+        border-radius: 2rem;
+    }
+    .preview-thumbnail-container {
+        width: 100% !important;
+    }
+}
+.preview-thumbnail-container {
+    width: 280px;
+    flex-shrink: 0;
+    position: relative;
+}
+.preview-thumbnail {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 1.75rem;
+    object-fit: cover;
+    background: var(--surface-container-high);
+    display: block;
+}
+.preview-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--secondary-container);
+    color: var(--on-secondary-container);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+.preview-badge.primary {
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+}
+.shimmer {
+    background: linear-gradient(90deg, transparent 25%, var(--surface-container-high) 50%, transparent 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
 </style>
 </head>
 <body class="bg-background font-body text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
@@ -305,6 +371,11 @@ tailwind.config = {
 <!-- Main Content -->
 <main class="flex-1 flex items-center justify-center px-6 py-12">
     <div class="w-full max-w-3xl flex flex-col gap-12">
+        <!-- Hero Preview Section -->
+        <div id="hero-preview">
+            <!-- Content injected by JS -->
+        </div>
+
         <!-- Input Section -->
         <div id="url-input-container" class="relative flex flex-col md:flex-row gap-4 p-3 bg-surface-container-lowest rounded-[2rem] shadow-sm border border-surface-container transition-all duration-300">
             <div class="flex-1 flex items-center px-4 gap-4">
@@ -464,6 +535,7 @@ urlInputContainer.addEventListener('drop', (e) => {
     if (url) {
         urlInput.value = url;
         updateButtonMode();
+        handleUrlInput();
     }
 });
 
@@ -487,7 +559,15 @@ function updateButtonMode() {
     }
 }
 
-urlInput.addEventListener('input', updateButtonMode);
+urlInput.addEventListener('input', () => {
+    updateButtonMode();
+    handleUrlInput();
+});
+
+urlInput.addEventListener('paste', () => {
+    // Ждём пока значение обновится после вставки
+    setTimeout(handleUrlInput, 10);
+});
 
 // WebSocket подключение
 let ws = null;
@@ -726,10 +806,124 @@ async function startDownload(url) {
 
         if (response.ok) {
             urlInput.value = '';
+            clearHeroPreview();
         }
     } catch (err) {
         console.error('Ошибка при загрузке:', err);
     }
+}
+
+// --- Hero Preview Logic ---
+const heroPreview = document.getElementById('hero-preview');
+let previewAbortController = null;
+let lastPreviewUrl = '';
+
+function showHeroLoading() {
+    heroPreview.classList.add('show');
+    heroPreview.innerHTML = `
+        <div class="preview-card animate-pulse">
+            <div class="preview-thumbnail-container shimmer rounded-[1.75rem]"></div>
+            <div class="flex-1 space-y-4 py-2">
+                <div class="h-6 bg-surface-container-high rounded-full w-3/4 shimmer"></div>
+                <div class="h-4 bg-surface-container-high rounded-full w-1/2 shimmer"></div>
+                <div class="flex gap-2">
+                    <div class="h-6 bg-surface-container-high rounded-lg w-16 shimmer"></div>
+                    <div class="h-6 bg-surface-container-high rounded-lg w-16 shimmer"></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function clearHeroPreview() {
+    heroPreview.classList.remove('show');
+    lastPreviewUrl = '';
+    if (previewAbortController) {
+        previewAbortController.abort();
+        previewAbortController = null;
+    }
+}
+
+async function handleUrlInput() {
+    const url = urlInput.value.trim();
+    
+    if (!url || url.startsWith('?') || !isValidYoutubeUrl(url)) {
+        clearHeroPreview();
+        return;
+    }
+
+    if (url === lastPreviewUrl) return;
+    lastPreviewUrl = url;
+
+    if (previewAbortController) {
+        previewAbortController.abort();
+    }
+    previewAbortController = new AbortController();
+
+    showHeroLoading();
+
+    try {
+        const response = await fetch(`${API_URL}/api/info`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url }),
+            signal: previewAbortController.signal
+        });
+
+        const data = await response.json();
+        if (data.error) {
+            clearHeroPreview();
+            return;
+        }
+
+        renderHeroPreview(data);
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error('Preview fetch error:', err);
+            clearHeroPreview();
+        }
+    }
+}
+
+function renderHeroPreview(data) {
+    if (!data || data.error) {
+        clearHeroPreview();
+        return;
+    }
+
+    const typeLabel = t(`main.preview_type_${data.type || 'video'}`);
+    const qualityLabel = data.quality ? t('main.preview_quality', { quality: data.quality }) : '';
+    const viewsLabel = data.views ? t('main.preview_views', { count: formatViewCount(data.views) }) : '';
+
+    heroPreview.innerHTML = `
+        <div class="preview-card animate-slide-in">
+            <div class="preview-thumbnail-container">
+                <img src="${data.thumbnail}" class="preview-thumbnail shadow-lg" alt="" onerror="this.src='https://i.ytimg.com/vi/placeholder/mqdefault.jpg'">
+                ${data.duration ? `<span class="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded-lg font-mono font-bold tracking-tight">${data.duration}</span>` : ''}
+            </div>
+            <div class="flex-1 flex flex-col justify-center min-w-0 py-2">
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="preview-badge primary">${typeLabel}</span>
+                    ${data.quality ? `<span class="preview-badge">${data.quality}</span>` : ''}
+                </div>
+                <h3 class="text-xl md:text-2xl font-headline font-bold text-on-surface line-clamp-2 leading-tight mb-2" title="${escapeHtml(data.title)}">
+                    ${escapeHtml(data.title)}
+                </h3>
+                <div class="flex items-center gap-3 text-on-surface-variant font-medium">
+                    <span class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[18px]">person</span>
+                        <span class="truncate">${escapeHtml(data.channel)}</span>
+                    </span>
+                    ${viewsLabel ? `
+                        <span class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[18px]">visibility</span>
+                            <span>${viewsLabel}</span>
+                        </span>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // Playlist Dialog
@@ -798,6 +992,7 @@ function closePlaylistDialog() {
     searchResults = [];
     selectedIndices = new Set();
     isSearchDialog = false;
+    clearHeroPreview();
 }
 
 // Выбрать все

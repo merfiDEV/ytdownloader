@@ -48,7 +48,12 @@
     "search_no_results": "No results found for \"{query}\"",
     "search_duration": "{duration}",
     "search_views": "{count} views",
-    "search_download_selected": "Download selected ({count})"
+    "search_download_selected": "Download selected ({count})",
+    "preview_type_video": "Video",
+    "preview_type_playlist": "Playlist",
+    "preview_type_short": "Shorts",
+    "preview_quality": "Quality: {quality}",
+    "preview_views": "{count} views"
   },
   "settings": {
     "page_title": "Settings",

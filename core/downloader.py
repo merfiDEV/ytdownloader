@@ -286,6 +286,118 @@ class DownloadManager:
         except Exception as e:
             return {"error": str(e)[:200]}
 
+    def _format_duration(self, duration_secs: Optional[int]) -> str:
+        if not duration_secs:
+            return ""
+        try:
+            mins, secs = divmod(int(duration_secs), 60)
+            hours, mins = divmod(mins, 60)
+            if hours > 0:
+                return f"{hours}:{mins:02}:{secs:02}"
+            return f"{mins}:{secs:02}"
+        except:
+            return ""
+
+    def _extract_quality(self, info: dict) -> str:
+        """Извлечь информацию о максимальном качестве."""
+        height = info.get("height")
+        if not height:
+            formats = info.get("formats", [])
+            for f in reversed(formats):
+                if f.get("height"):
+                    height = f.get("height")
+                    break
+        
+        if height:
+            if height >= 2160: return "4K"
+            if height >= 1440: return "2K"
+            if height >= 1080: return "1080p"
+            if height >= 720: return "720p"
+            if height >= 480: return "480p"
+            return f"{height}p"
+        return ""
+
+    async def get_url_info(self, url: str) -> dict:
+        """Получить информацию о видео или плейлисте для превью."""
+        if not self.ytdlp_path.exists():
+            return {"error": "yt-dlp.exe not found"}
+
+        try:
+            settings = load_settings()
+            # Пытаемся получить информацию без загрузки контента
+            cmd = [
+                str(self.ytdlp_path),
+                "-j",
+                "--no-playlist",
+                "--no-warnings",
+            ]
+            cmd.extend(self._get_cookie_args(settings))
+            cmd.append(url)
+
+            proc = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                **self._ytdlp_subprocess_kwargs(),
+            )
+            stdout, stderr = await proc.communicate()
+
+            if proc.returncode != 0:
+                # Если не удалось как видео, пробуем как плейлист (flat)
+                cmd_pl = [
+                    str(self.ytdlp_path),
+                    "-j",
+                    "--flat-playlist",
+                    "--playlist-items", "0", # Только инфо о плейлисте
+                ]
+                cmd_pl.extend(self._get_cookie_args(settings))
+                cmd_pl.append(url)
+                
+                proc_pl = await asyncio.create_subprocess_exec(
+                    *cmd_pl,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    **self._ytdlp_subprocess_kwargs(),
+                )
+                stdout_pl, _ = await proc_pl.communicate()
+                
+                if proc_pl.returncode == 0:
+                    try:
+                        info = json.loads(stdout_pl.decode("utf-8", errors="replace"))
+                        return {
+                            "title": info.get("title") or "Playlist",
+                            "thumbnail": info.get("thumbnail") or "",
+                            "channel": info.get("uploader") or info.get("channel") or "",
+                            "type": "playlist",
+                            "duration": "", 
+                            "quality": "",
+                            "views": info.get("view_count", 0),
+                        }
+                    except: pass
+
+                raw = stderr.decode("utf-8", errors="replace")
+                _, msg, help_text = self._classify_error(raw)
+                return {"error": msg, "help": help_text}
+
+            info = json.loads(stdout.decode("utf-8", errors="replace"))
+            
+            # Определяем тип
+            content_type = "video"
+            if "shorts" in url.lower() or "/shorts/" in info.get("webpage_url", "").lower():
+                content_type = "short"
+            
+            return {
+                "title": info.get("title", ""),
+                "thumbnail": info.get("thumbnail", ""),
+                "duration": self._format_duration(info.get("duration")),
+                "channel": info.get("uploader") or info.get("channel") or "",
+                "quality": self._extract_quality(info),
+                "type": content_type,
+                "views": info.get("view_count", 0),
+            }
+        except Exception as e:
+            return {"error": str(e)[:200]}
+
     async def add_download(self, url: str) -> DownloadTask:
         """Добавить новую задачу загрузки."""
         settings = load_settings()

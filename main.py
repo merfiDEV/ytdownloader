@@ -298,6 +298,12 @@ async def get_playlist_info(request: DownloadRequest):
     return info
 
 
+@app.post("/api/info")
+async def get_url_info(request: DownloadRequest):
+    """Получить информацию о видео или плейлисте для превью."""
+    return await download_manager.get_url_info(request.url)
+
+
 @app.post("/api/playlist/download")
 async def download_playlist(request: PlaylistDownloadRequest):
     """Скачать выбранные видео из плейлиста."""
