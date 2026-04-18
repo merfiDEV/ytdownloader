@@ -471,6 +471,11 @@
             position: relative;
         }
 
+        .completed .progress-fill-premium {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
         .progress-fill-premium::after {
             content: "";
             position: absolute;
@@ -595,6 +600,55 @@
             /* Green 600 */
             box-shadow: 0 0 20px rgba(5, 150, 105, 0.4) !important;
             transform: scale(1.02);
+        }
+
+        /* Completion Moment Animations */
+        @keyframes card-success-flash {
+            0% { 
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1);
+                background: var(--surface-container-low);
+            }
+            15% {
+                box-shadow: 0 0 30px 10px rgba(16, 185, 129, 0.3);
+                transform: scale(1.01);
+                background: rgba(16, 185, 129, 0.05);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1);
+                background: var(--surface-container-lowest);
+            }
+        }
+
+        .just-completed {
+            animation: card-success-flash 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            border-color: #10b981 !important;
+            z-index: 10;
+        }
+
+        @keyframes check-pop {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            70% { transform: scale(1.2) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .animate-check {
+            animation: check-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes slide-in-right {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .animate-slide-right {
+            animation: slide-in-right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .live-card.completed {
+            border-color: rgba(16, 185, 129, 0.2);
+            background: var(--surface-container-lowest);
         }
     </style>
 </head>
@@ -1567,6 +1621,7 @@
 
         // Ренер списка загрузок
         const renderedTaskIds = new Set();
+        const completedTaskIds = new Set();
 
         function renderDownloads(tasks) {
             if (tasks.length === 0) {
@@ -1574,6 +1629,7 @@
                 downloadsList.innerHTML = '';
                 downloadsList.appendChild(emptyState);
                 renderedTaskIds.clear();
+                completedTaskIds.clear();
                 return;
             }
 
@@ -1599,8 +1655,11 @@
                 const isNew = !renderedTaskIds.has(task.id);
                 if (isNew) renderedTaskIds.add(task.id);
 
+                const isNewCompleted = isCompleted && !completedTaskIds.has(task.id);
+                if (isNewCompleted) completedTaskIds.add(task.id);
+
                 return `
-        <div class="live-card bg-surface-container-low p-5 rounded-[2rem] flex flex-col sm:flex-row gap-5 ${isDownloading || isProcessing ? 'active' : ''} ${isCompleted ? 'opacity-75' : ''} ${isNew ? 'animate-reveal' : ''}" style="${isNew ? `--delay: ${index * 0.1}s` : ''}">
+        <div class="live-card bg-surface-container-low p-5 rounded-[2rem] flex flex-col sm:flex-row gap-5 ${isDownloading || isProcessing ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${isNew ? 'animate-reveal' : ''} ${isNewCompleted ? 'just-completed' : ''}" style="${isNew ? `--delay: ${index * 0.1}s` : ''}">
             <!-- Thumbnail with pulse effect if active -->
             <div class="relative shrink-0 flex items-center justify-center">
                 <img src="${task.thumbnail || 'https://i.ytimg.com/vi/placeholder/mqdefault.jpg'}" 
@@ -1608,7 +1667,7 @@
                      alt="" onerror="this.src='https://i.ytimg.com/vi/placeholder/mqdefault.jpg'">
                 ${isCompleted ? `
                 <div class="absolute inset-0 bg-green-500/10 backdrop-blur-[1px] rounded-2xl flex items-center justify-center">
-                    <span class="material-symbols-outlined text-green-600 bg-white/90 rounded-full p-1 shadow-sm">check_circle</span>
+                    <span class="material-symbols-outlined text-green-600 bg-white/90 rounded-full p-1 shadow-sm ${isNewCompleted ? 'animate-check' : ''}">check_circle</span>
                 </div>
                 ` : ''}
             </div>
@@ -1674,7 +1733,7 @@
 
                     <div class="flex gap-1">
                         ${canOpenFile ? `
-                        <button onclick="openFileByTask('${task.id}')" class="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-xs font-bold transition-all flex items-center gap-1.5">
+                        <button onclick="openFileByTask('${task.id}')" class="px-4 py-2 rounded-xl bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25 text-xs font-bold transition-all flex items-center gap-1.5 ${isNewCompleted ? 'animate-slide-right' : ''}">
                             <span class="material-symbols-outlined text-[18px]">file_open</span> ${t('common.open_file')}
                         </button>
                         ` : ''}
