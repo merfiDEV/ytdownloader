@@ -1,934 +1,1168 @@
 <!DOCTYPE html>
 <html class="light" lang="ru">
+
 <head>
-<script>
-    (function() {
-        const stored = localStorage.getItem('dark_theme');
-        if (stored === 'true') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-        } else if (stored === 'false') {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-        }
-    })();
-</script>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>StreamVault</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-tailwind.config = {
-    darkMode: "class",
-    theme: {
-        extend: {
-            "colors": {
-                "error-container": "var(--error-container)",
-                "on-secondary-container": "var(--on-secondary-container)",
-                "surface-variant": "var(--surface-variant)",
-                "on-background": "var(--on-background)",
-                "on-error": "var(--on-error)",
-                "surface-dim": "var(--surface-dim)",
-                "on-tertiary-fixed": "var(--on-tertiary-fixed)",
-                "primary": "var(--primary)",
-                "on-primary-container": "var(--on-primary-container)",
-                "on-error-container": "var(--on-error-container)",
-                "on-primary-fixed": "var(--on-primary-fixed)",
-                "on-secondary-fixed": "var(--on-secondary-fixed)",
-                "primary-fixed": "var(--primary-fixed)",
-                "surface-container-low": "var(--surface-container-low)",
-                "secondary": "var(--secondary)",
-                "tertiary": "var(--tertiary)",
-                "inverse-primary": "var(--inverse-primary)",
-                "on-secondary": "var(--on-secondary)",
-                "secondary-container": "var(--secondary-container)",
-                "primary-container": "var(--primary-container)",
-                "on-primary-fixed-variant": "var(--on-primary-fixed-variant)",
-                "tertiary-fixed-dim": "var(--tertiary-fixed-dim)",
-                "on-surface": "var(--on-surface)",
-                "on-tertiary-fixed-variant": "var(--on-tertiary-fixed-variant)",
-                "inverse-on-surface": "var(--inverse-on-surface)",
-                "inverse-surface": "var(--inverse-surface)",
-                "surface-container": "var(--surface-container)",
-                "on-tertiary": "var(--on-tertiary)",
-                "surface": "var(--surface)",
-                "tertiary-fixed": "var(--tertiary-fixed)",
-                "background": "var(--background)",
-                "on-primary": "var(--on-primary)",
-                "surface-container-lowest": "var(--surface-container-lowest)",
-                "surface-container-high": "var(--surface-container-high)",
-                "surface-bright": "var(--surface-bright)",
-                "tertiary-container": "var(--tertiary-container)",
-                "primary-fixed-dim": "var(--primary-fixed-dim)",
-                "on-tertiary-container": "var(--on-tertiary-container)",
-                "outline": "var(--outline)",
-                "error": "var(--error)",
-                "outline-variant": "var(--outline-variant)",
-                "secondary-fixed": "var(--secondary-fixed)",
-                "surface-tint": "var(--surface-tint)",
-                "on-surface-variant": "var(--on-surface-variant)",
-                "surface-container-highest": "var(--surface-container-highest)",
-                "secondary-fixed-dim": "var(--secondary-fixed-dim)",
-                "on-secondary-fixed-variant": "var(--on-secondary-fixed-variant)"
-            },
-            "borderRadius": {
-                "DEFAULT": "0.25rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem",
-                "full": "9999px"
-            },
-            "fontFamily": {
-                "headline": ["Plus Jakarta Sans"],
-                "body": ["Inter"],
-                "label": ["Inter"]
+    <script>
+        (function () {
+            const stored = localStorage.getItem('dark_theme');
+            if (stored === 'true') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            } else if (stored === 'false') {
+                document.documentElement.classList.add('light');
+                document.documentElement.classList.remove('dark');
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
             }
-        },
-    },
-}
-</script>
-<style>
-:root.light {
-    --primary: #bc0100;
-    --on-primary: #ffffff;
-    --primary-container: #eb0000;
-    --on-primary-container: #fffbff;
-    --secondary: #5f5e5e;
-    --on-secondary: #ffffff;
-    --secondary-container: #e4e2e1;
-    --on-secondary-container: #656464;
-    --tertiary: #0059ba;
-    --on-tertiary: #ffffff;
-    --tertiary-container: #0071e8;
-    --on-tertiary-container: #fefcff;
-    --error: #ba1a1a;
-    --on-error: #ffffff;
-    --error-container: #ffdad6;
-    --on-error-container: #93000a;
-    --background: #f9f9f9;
-    --on-background: #1a1c1c;
-    --surface: #f9f9f9;
-    --on-surface: #1a1c1c;
-    --surface-variant: #e2e2e2;
-    --on-surface-variant: #603e39;
-    --outline: #956d67;
-    --outline-variant: #ebbbb4;
-    --surface-container-lowest: #ffffff;
-    --surface-container-low: #f3f3f3;
-    --surface-container: #eeeeee;
-    --surface-container-high: #e8e8e8;
-    --surface-container-highest: #e2e2e2;
-    --surface-dim: #dadada;
-    --surface-bright: #f9f9f9;
-    --surface-tint: #c00100;
-    --inverse-surface: #2f3131;
-    --inverse-on-surface: #f1f1f1;
-    --inverse-primary: #ffb4a8;
-    --primary-fixed: #ffdad4;
-    --on-primary-fixed: #410000;
-    --primary-fixed-dim: #ffb4a8;
-    --on-primary-fixed-variant: #930100;
-    --secondary-fixed: #e4e2e1;
-    --on-secondary-fixed: #1b1c1c;
-    --secondary-fixed-dim: #c8c6c5;
-    --on-secondary-fixed-variant: #474746;
-    --tertiary-fixed: #d7e2ff;
-    --on-tertiary-fixed: #001a40;
-    --tertiary-fixed-dim: #acc7ff;
-    --on-tertiary-fixed-variant: #004491;
-    --primary-rgb: 188, 1, 0;
-}
+        })();
+    </script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>StreamVault</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "var(--error-container)",
+                        "on-secondary-container": "var(--on-secondary-container)",
+                        "surface-variant": "var(--surface-variant)",
+                        "on-background": "var(--on-background)",
+                        "on-error": "var(--on-error)",
+                        "surface-dim": "var(--surface-dim)",
+                        "on-tertiary-fixed": "var(--on-tertiary-fixed)",
+                        "primary": "var(--primary)",
+                        "on-primary-container": "var(--on-primary-container)",
+                        "on-error-container": "var(--on-error-container)",
+                        "on-primary-fixed": "var(--on-primary-fixed)",
+                        "on-secondary-fixed": "var(--on-secondary-fixed)",
+                        "primary-fixed": "var(--primary-fixed)",
+                        "surface-container-low": "var(--surface-container-low)",
+                        "secondary": "var(--secondary)",
+                        "tertiary": "var(--tertiary)",
+                        "inverse-primary": "var(--inverse-primary)",
+                        "on-secondary": "var(--on-secondary)",
+                        "secondary-container": "var(--secondary-container)",
+                        "primary-container": "var(--primary-container)",
+                        "on-primary-fixed-variant": "var(--on-primary-fixed-variant)",
+                        "tertiary-fixed-dim": "var(--tertiary-fixed-dim)",
+                        "on-surface": "var(--on-surface)",
+                        "on-tertiary-fixed-variant": "var(--on-tertiary-fixed-variant)",
+                        "inverse-on-surface": "var(--inverse-on-surface)",
+                        "inverse-surface": "var(--inverse-surface)",
+                        "surface-container": "var(--surface-container)",
+                        "on-tertiary": "var(--on-tertiary)",
+                        "surface": "var(--surface)",
+                        "tertiary-fixed": "var(--tertiary-fixed)",
+                        "background": "var(--background)",
+                        "on-primary": "var(--on-primary)",
+                        "surface-container-lowest": "var(--surface-container-lowest)",
+                        "surface-container-high": "var(--surface-container-high)",
+                        "surface-bright": "var(--surface-bright)",
+                        "tertiary-container": "var(--tertiary-container)",
+                        "primary-fixed-dim": "var(--primary-fixed-dim)",
+                        "on-tertiary-container": "var(--on-tertiary-container)",
+                        "outline": "var(--outline)",
+                        "error": "var(--error)",
+                        "outline-variant": "var(--outline-variant)",
+                        "secondary-fixed": "var(--secondary-fixed)",
+                        "surface-tint": "var(--surface-tint)",
+                        "on-surface-variant": "var(--on-surface-variant)",
+                        "surface-container-highest": "var(--surface-container-highest)",
+                        "secondary-fixed-dim": "var(--secondary-fixed-dim)",
+                        "on-secondary-fixed-variant": "var(--on-secondary-fixed-variant)"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        :root.light {
+            --primary: #bc0100;
+            --on-primary: #ffffff;
+            --primary-container: #eb0000;
+            --on-primary-container: #fffbff;
+            --secondary: #5f5e5e;
+            --on-secondary: #ffffff;
+            --secondary-container: #e4e2e1;
+            --on-secondary-container: #656464;
+            --tertiary: #0059ba;
+            --on-tertiary: #ffffff;
+            --tertiary-container: #0071e8;
+            --on-tertiary-container: #fefcff;
+            --error: #ba1a1a;
+            --on-error: #ffffff;
+            --error-container: #ffdad6;
+            --on-error-container: #93000a;
+            --background: #f9f9f9;
+            --on-background: #1a1c1c;
+            --surface: #f9f9f9;
+            --on-surface: #1a1c1c;
+            --surface-variant: #e2e2e2;
+            --on-surface-variant: #603e39;
+            --outline: #956d67;
+            --outline-variant: #ebbbb4;
+            --surface-container-lowest: #ffffff;
+            --surface-container-low: #f3f3f3;
+            --surface-container: #eeeeee;
+            --surface-container-high: #e8e8e8;
+            --surface-container-highest: #e2e2e2;
+            --surface-dim: #dadada;
+            --surface-bright: #f9f9f9;
+            --surface-tint: #c00100;
+            --inverse-surface: #2f3131;
+            --inverse-on-surface: #f1f1f1;
+            --inverse-primary: #ffb4a8;
+            --primary-fixed: #ffdad4;
+            --on-primary-fixed: #410000;
+            --primary-fixed-dim: #ffb4a8;
+            --on-primary-fixed-variant: #930100;
+            --secondary-fixed: #e4e2e1;
+            --on-secondary-fixed: #1b1c1c;
+            --secondary-fixed-dim: #c8c6c5;
+            --on-secondary-fixed-variant: #474746;
+            --tertiary-fixed: #d7e2ff;
+            --on-tertiary-fixed: #001a40;
+            --tertiary-fixed-dim: #acc7ff;
+            --on-tertiary-fixed-variant: #004491;
+            --primary-rgb: 188, 1, 0;
+        }
 
-:root.dark {
-    --primary: #ffb4a8;
-    --on-primary: #690000;
-    --primary-container: #930100;
-    --on-primary-container: #ffdad4;
-    --secondary: #c8c6c5;
-    --on-secondary: #303030;
-    --secondary-container: #474746;
-    --on-secondary-container: #e4e2e1;
-    --tertiary: #acc7ff;
-    --on-tertiary: #002f67;
-    --tertiary-container: #004491;
-    --on-tertiary-container: #d7e2ff;
-    --error: #ffb4ab;
-    --on-error: #690005;
-    --error-container: #93000a;
-    --on-error-container: #ffdad6;
-    --background: #111414;
-    --on-background: #e2e2e2;
-    --surface: #111414;
-    --on-surface: #e2e2e2;
-    --surface-variant: #534341;
-    --on-surface-variant: #d8c2be;
-    --outline: #a08c8a;
-    --outline-variant: #534341;
-    --surface-container-lowest: #0c0f0f;
-    --surface-container-low: #1a1c1c;
-    --surface-container: #1e2020;
-    --surface-container-high: #282a2a;
-    --surface-container-highest: #333535;
-    --surface-dim: #111414;
-    --surface-bright: #373a3a;
-    --surface-tint: #ffb4a8;
-    --inverse-surface: #e2e2e2;
-    --inverse-on-surface: #2f3131;
-    --inverse-primary: #bc0100;
-    --primary-fixed: #ffdad4;
-    --on-primary-fixed: #410000;
-    --primary-fixed-dim: #ffb4a8;
-    --on-primary-fixed-variant: #930100;
-    --secondary-fixed: #e4e2e1;
-    --on-secondary-fixed: #1b1c1c;
-    --secondary-fixed-dim: #c8c6c5;
-    --on-secondary-fixed-variant: #474746;
-    --tertiary-fixed: #d7e2ff;
-    --on-tertiary-fixed: #001a40;
-    --tertiary-fixed-dim: #acc7ff;
-    --on-tertiary-fixed-variant: #004491;
-    --primary-rgb: 255, 180, 168;
-}
+        :root.dark {
+            --primary: #ffb4a8;
+            --on-primary: #690000;
+            --primary-container: #930100;
+            --on-primary-container: #ffdad4;
+            --secondary: #c8c6c5;
+            --on-secondary: #303030;
+            --secondary-container: #474746;
+            --on-secondary-container: #e4e2e1;
+            --tertiary: #acc7ff;
+            --on-tertiary: #002f67;
+            --tertiary-container: #004491;
+            --on-tertiary-container: #d7e2ff;
+            --error: #ffb4ab;
+            --on-error: #690005;
+            --error-container: #93000a;
+            --on-error-container: #ffdad6;
+            --background: #111414;
+            --on-background: #e2e2e2;
+            --surface: #111414;
+            --on-surface: #e2e2e2;
+            --surface-variant: #534341;
+            --on-surface-variant: #d8c2be;
+            --outline: #a08c8a;
+            --outline-variant: #534341;
+            --surface-container-lowest: #0c0f0f;
+            --surface-container-low: #1a1c1c;
+            --surface-container: #1e2020;
+            --surface-container-high: #282a2a;
+            --surface-container-highest: #333535;
+            --surface-dim: #111414;
+            --surface-bright: #373a3a;
+            --surface-tint: #ffb4a8;
+            --inverse-surface: #e2e2e2;
+            --inverse-on-surface: #2f3131;
+            --inverse-primary: #bc0100;
+            --primary-fixed: #ffdad4;
+            --on-primary-fixed: #410000;
+            --primary-fixed-dim: #ffb4a8;
+            --on-primary-fixed-variant: #930100;
+            --secondary-fixed: #e4e2e1;
+            --on-secondary-fixed: #1b1c1c;
+            --secondary-fixed-dim: #c8c6c5;
+            --on-secondary-fixed-variant: #474746;
+            --tertiary-fixed: #d7e2ff;
+            --on-tertiary-fixed: #001a40;
+            --tertiary-fixed-dim: #acc7ff;
+            --on-tertiary-fixed-variant: #004491;
+            --primary-rgb: 255, 180, 168;
+        }
 
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-.signature-gradient {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
-}
-.dark .signature-gradient {
-    background: linear-gradient(135deg, #bc0100 0%, #eb0000 100%);
-}
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(16px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes slideOut {
-    from { opacity: 1; transform: translateY(0) scale(1); }
-    to { opacity: 0; transform: translateY(16px) scale(0.95); }
-}
-.animate-slide-in { animation: slideIn 0.3s ease-out; }
-.animate-slide-out { animation: slideOut 0.3s ease-in; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
 
-/* Кастомный скроллбар под дизайн */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--outline-variant);
-    border-radius: 99px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--outline);
-}
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--outline-variant) transparent;
-}
-.drag-over {
-    border-color: var(--primary) !important;
-    background-color: var(--surface-container-low) !important;
-    transform: scale(1.01);
-}
-.empty-state-glow {
-    background:
-        radial-gradient(circle at top left, rgba(var(--primary-rgb), 0.12) 0%, transparent 42%),
-        radial-gradient(circle at bottom right, rgba(0, 113, 232, 0.10) 0%, transparent 38%),
-        linear-gradient(180deg, var(--surface-container-lowest) 0%, var(--surface-container-low) 100%);
-}
-.empty-state-chip {
-    position: relative;
-    overflow: hidden;
-}
-.empty-state-chip::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.08) 100%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-}
-.empty-state-chip:hover::before {
-    opacity: 1;
-}
-#hero-preview {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-}
-#hero-preview.show {
-    max-height: 600px;
-    opacity: 1;
-    margin-bottom: 2rem;
-}
-.preview-card {
-    background: var(--surface-container-lowest);
-    border: 1px solid var(--outline-variant);
-    border-radius: 2.5rem;
-    padding: 1.25rem;
-    display: flex;
-    gap: 1.5rem;
-    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08);
-}
-.live-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1.5px solid var(--surface-container);
-    position: relative;
-    overflow: hidden;
-}
-.live-card:hover {
-    border-color: var(--outline-variant);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px -8px rgba(0,0,0,0.1);
-}
-.live-card.active {
-    border-color: var(--primary-container);
-    background: var(--surface-container-lowest);
-}
-.progress-container-premium {
-    height: 8px;
-    background: var(--surface-container-high);
-    border-radius: 99px;
-    overflow: hidden;
-    position: relative;
-}
-.progress-fill-premium {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-container) 100%);
-    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-}
-.progress-fill-premium::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shimmer 2s infinite linear;
-}
-@keyframes pulse-glow {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4); }
-    70% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(var(--primary-rgb), 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
-}
-.animate-pulse-glow {
-    animation: pulse-glow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
-}
-.metrics-badge {
-    background: var(--surface-container-high);
-    color: var(--on-surface-variant);
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: ui-monospace, monospace;
-}
-@media (max-width: 640px) {
-    .preview-card {
-        flex-direction: column;
-        border-radius: 2rem;
-    }
-    .preview-thumbnail-container {
-        width: 100% !important;
-    }
-}
-.preview-thumbnail-container {
-    width: 280px;
-    flex-shrink: 0;
-    position: relative;
-}
-.preview-thumbnail {
-    width: 100%;
-    aspect-ratio: 16/9;
-    border-radius: 1.75rem;
-    object-fit: cover;
-    background: var(--surface-container-high);
-    display: block;
-}
-.preview-badge {
-    display: inline-flex;
-    align-items: center;
-    background: var(--secondary-container);
-    color: var(--on-secondary-container);
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    line-height: 1.2;
-}
-.preview-badge.primary {
-    background: var(--primary-container);
-    color: var(--on-primary-container);
-}
-.shimmer {
-    background: linear-gradient(90deg, transparent 25%, var(--surface-container-high) 50%, transparent 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
+        .signature-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-container) 100%);
+        }
 
-/* Premium Micro-interactions */
-.hover-lift {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.hover-lift:hover {
-    transform: translateY(-5px);
-}
+        .dark .signature-gradient {
+            background: linear-gradient(135deg, #bc0100 0%, #eb0000 100%);
+        }
 
-.btn-glow:hover {
-    box-shadow: 0 8px 25px -5px rgba(var(--primary-rgb), 0.5);
-}
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px) scale(0.95);
+            }
 
-.btn-ripple {
-    position: relative;
-    overflow: hidden;
-}
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(0);
-    animation: ripple-animation 0.6s linear;
-    pointer-events: none;
-}
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
 
-@keyframes ripple-animation {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
+            to {
+                opacity: 0;
+                transform: translateY(16px) scale(0.95);
+            }
+        }
 
-.animate-reveal {
-    animation: reveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
 
-@keyframes reveal {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .animate-slide-out {
+            animation: slideOut 0.3s ease-in;
+        }
 
-.success-state {
-    background: #059669 !important; /* Green 600 */
-    box-shadow: 0 0 20px rgba(5, 150, 105, 0.4) !important;
-    transform: scale(1.02);
-}
-</style>
+        /* Кастомный скроллбар под дизайн */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--outline-variant);
+            border-radius: 99px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--outline);
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--outline-variant) transparent;
+        }
+
+        .drag-over {
+            border-color: var(--primary) !important;
+            background-color: var(--surface-container-low) !important;
+            transform: scale(1.01);
+        }
+
+        .empty-state-glow {
+            background:
+                radial-gradient(circle at top left, rgba(var(--primary-rgb), 0.12) 0%, transparent 42%),
+                radial-gradient(circle at bottom right, rgba(0, 113, 232, 0.10) 0%, transparent 38%),
+                linear-gradient(180deg, var(--surface-container-lowest) 0%, var(--surface-container-low) 100%);
+        }
+
+        .empty-state-chip {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .empty-state-chip::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.08) 100%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .empty-state-chip:hover::before {
+            opacity: 1;
+        }
+
+        #hero-preview {
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 0;
+            overflow: visible; /* Changed to allow parallax tilt without clipping */
+            opacity: 0;
+            perspective: 1200px;
+        }
+
+        #hero-preview.show {
+            max-height: 600px;
+            opacity: 1;
+            margin-bottom: 3rem;
+        }
+
+        .hero-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-card {
+            position: relative;
+            width: 100%;
+            background: rgba(var(--surface-container-lowest-rgb), 0.7);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 3rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 2rem;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .hero-card:hover {
+            box-shadow: 
+                0 35px 60px -15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-card-bg {
+            position: absolute;
+            inset: -20%;
+            background-image: var(--preview-url);
+            background-size: cover;
+            background-position: center;
+            filter: blur(80px) opacity(0.25);
+            pointer-events: none;
+            z-index: 0;
+            transform: translateZ(-50px) scale(1.1);
+        }
+
+        .hero-card-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            transform: translateZ(30px);
+        }
+
+        .hero-thumbnail-container {
+            width: 320px;
+            flex-shrink: 0;
+            position: relative;
+            transform: translateZ(50px);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 2rem;
+            object-fit: cover;
+            background: var(--surface-container-high);
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(var(--secondary-container-rgb), 0.5);
+            backdrop-filter: blur(8px);
+            color: var(--on-secondary-container);
+            padding: 0.35rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+        }
+
+        .hero-badge.primary {
+            background: rgba(var(--primary-rgb), 0.15);
+            color: var(--primary);
+            border-color: rgba(var(--primary-rgb), 0.2);
+        }
+
+        .hero-badge.accent {
+            background: rgba(0, 113, 232, 0.15);
+            color: #0071e8;
+            border-color: rgba(0, 113, 232, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero-card-content {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .hero-thumbnail-container {
+                width: 100% !important;
+            }
+            
+            .hero-card {
+                padding: 1.25rem;
+                border-radius: 2.5rem;
+            }
+        }
+
+        /* Update existing CSS variables for RGB support */
+        :root.light {
+            --surface-container-lowest-rgb: 255, 255, 255;
+            --secondary-container-rgb: 228, 226, 225;
+            --primary-rgb: 188, 1, 0;
+        }
+
+        :root.dark {
+            --surface-container-lowest-rgb: 12, 15, 15;
+            --secondary-container-rgb: 71, 71, 70;
+            --primary-rgb: 255, 180, 168;
+        }
+
+        .live-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1.5px solid var(--surface-container);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-card:hover {
+            border-color: var(--outline-variant);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-card.active {
+            border-color: var(--primary-container);
+            background: var(--surface-container-lowest);
+        }
+
+        .progress-container-premium {
+            height: 8px;
+            background: var(--surface-container-high);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill-premium {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-container) 100%);
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .progress-fill-premium::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+            }
+
+            70% {
+                transform: scale(1.02);
+                box-shadow: 0 0 0 12px rgba(var(--primary-rgb), 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+            }
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .metrics-badge {
+            background: var(--surface-container-high);
+            color: var(--on-surface-variant);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: ui-monospace, monospace;
+        }
+
+        @media (max-width: 640px) {
+            .hero-card {
+                flex-direction: column;
+                border-radius: 2rem;
+            }
+
+            .hero-thumbnail-container {
+                width: 100% !important;
+            }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent 25%, var(--surface-container-high) 50%, transparent 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Premium Micro-interactions */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 8px 25px -5px rgba(var(--primary-rgb), 0.5);
+        }
+
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .animate-reveal {
+            animation: reveal 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+
+        @keyframes reveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-state {
+            background: #059669 !important;
+            /* Green 600 */
+            box-shadow: 0 0 20px rgba(5, 150, 105, 0.4) !important;
+            transform: scale(1.02);
+        }
+    </style>
 </head>
-<body class="bg-background font-body text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
-<!-- Header -->
-<header class="w-full flex justify-between items-center px-6 py-4">
-    <div class="flex items-center gap-2">
-        <span class="text-primary font-headline font-800 text-2xl tracking-tighter" data-i18n="common.app_subtitle">VOID</span>
-    </div>
-    <div class="flex items-center gap-2">
-        <button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="main.theme_toggle" title="Переключить тему">
-            <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
-        </button>
-        <a id="history-link" href="/history" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="common.history" title="История загрузок">
-            <span class="material-symbols-outlined">history</span>
-        </a>
-        <a id="settings-link" href="/settings" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400" data-i18n-title="common.settings" title="Настройки">
-            <span class="material-symbols-outlined">settings</span>
-        </a>
-        <button id="close-app" class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400" data-i18n-title="common.close_app" title="Закрыть приложение">
-            <span class="material-symbols-outlined">close</span>
-        </button>
-    </div>
-</header>
 
-<!-- Toast Notifications -->
-<div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-3 max-w-sm"></div>
-
-<!-- Playlist Dialog -->
-<div id="playlist-dialog" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-6">
-    <div class="bg-surface-container-lowest border border-outline-variant rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-slide-in">
-        <!-- Dialog Header -->
-        <div class="flex items-center justify-between p-6 border-b border-outline-variant">
-            <div>
-                <h2 id="playlist-title" class="text-xl font-headline font-bold text-on-surface" data-i18n="main.playlist_title">Playlist</h2>
-                <p id="playlist-count" class="text-sm text-on-surface-variant mt-1"></p>
-            </div>
-            <button id="playlist-close" class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface">
+<body
+    class="bg-background font-body text-on-background selection:bg-primary/20 selection:text-primary min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="w-full flex justify-between items-center px-6 py-4">
+        <div class="flex items-center gap-2">
+            <span class="text-primary font-headline font-800 text-2xl tracking-tighter"
+                data-i18n="common.app_subtitle">VOID</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="theme-toggle"
+                class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400"
+                data-i18n-title="main.theme_toggle" title="Переключить тему">
+                <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+            </button>
+            <a id="history-link" href="/history"
+                class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400"
+                data-i18n-title="common.history" title="История загрузок">
+                <span class="material-symbols-outlined">history</span>
+            </a>
+            <a id="settings-link" href="/settings"
+                class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400"
+                data-i18n-title="common.settings" title="Настройки">
+                <span class="material-symbols-outlined">settings</span>
+            </a>
+            <button id="close-app"
+                class="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors active:scale-95 duration-300 text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400"
+                data-i18n-title="common.close_app" title="Закрыть приложение">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
+    </header>
 
-        <!-- Dialog Body -->
-        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
-            <!-- Select All / Deselect All -->
-            <div class="flex gap-3 mb-4 px-2">
-                <button id="select-all-btn" class="text-sm text-primary hover:text-primary-container font-semibold transition-colors" data-i18n="main.select_all">
-                    Выбрать все
-                </button>
-                <button id="deselect-all-btn" class="text-sm text-on-surface-variant hover:text-on-surface font-semibold transition-colors" data-i18n="main.deselect_all">
-                    Снять все
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col gap-3 max-w-sm"></div>
+
+    <!-- Playlist Dialog -->
+    <div id="playlist-dialog" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-6">
+        <div
+            class="bg-surface-container-lowest border border-outline-variant rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col animate-slide-in">
+            <!-- Dialog Header -->
+            <div class="flex items-center justify-between p-6 border-b border-outline-variant">
+                <div>
+                    <h2 id="playlist-title" class="text-xl font-headline font-bold text-on-surface"
+                        data-i18n="main.playlist_title">Playlist</h2>
+                    <p id="playlist-count" class="text-sm text-on-surface-variant mt-1"></p>
+                </div>
+                <button id="playlist-close"
+                    class="p-2 rounded-full hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface">
+                    <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <!-- Video List -->
-            <div id="playlist-videos" class="space-y-2">
-                <!-- Видео будут добавлены динамически -->
-            </div>
-        </div>
 
-        <!-- Dialog Footer -->
-        <div class="p-6 border-t border-outline-variant flex justify-end">
-            <button id="playlist-download-btn" class="signature-gradient text-on-primary px-8 py-3 rounded-full font-headline font-bold hover-lift btn-glow btn-ripple active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                <!-- Translated by JS -->
-            </button>
+            <!-- Dialog Body -->
+            <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                <!-- Select All / Deselect All -->
+                <div class="flex gap-3 mb-4 px-2">
+                    <button id="select-all-btn"
+                        class="text-sm text-primary hover:text-primary-container font-semibold transition-colors"
+                        data-i18n="main.select_all">
+                        Выбрать все
+                    </button>
+                    <button id="deselect-all-btn"
+                        class="text-sm text-on-surface-variant hover:text-on-surface font-semibold transition-colors"
+                        data-i18n="main.deselect_all">
+                        Снять все
+                    </button>
+                </div>
+                <!-- Video List -->
+                <div id="playlist-videos" class="space-y-2">
+                    <!-- Видео будут добавлены динамически -->
+                </div>
+            </div>
+
+            <!-- Dialog Footer -->
+            <div class="p-6 border-t border-outline-variant flex justify-end">
+                <button id="playlist-download-btn"
+                    class="signature-gradient text-on-primary px-8 py-3 rounded-full font-headline font-bold hover-lift btn-glow btn-ripple active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <!-- Translated by JS -->
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Main Content -->
-<main class="flex-1 flex items-center justify-center px-6 py-12">
-    <div class="w-full max-w-3xl flex flex-col gap-12">
-        <!-- Hero Preview Section -->
-        <div id="hero-preview">
-            <!-- Content injected by JS -->
-        </div>
-
-        <!-- Input Section -->
-        <div id="url-input-container" class="relative flex flex-col md:flex-row gap-4 p-3 bg-surface-container-lowest rounded-[2rem] shadow-sm border border-surface-container transition-all duration-300">
-            <div class="flex-1 flex items-center px-4 gap-4">
-                <span class="material-symbols-outlined text-primary">link</span>
-                <input id="url-input" class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container" data-i18n-placeholder="main.url_placeholder" placeholder="Вставьте URL или ?запрос для поиска..." type="text"/>
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-6 py-12">
+        <div class="w-full max-w-3xl flex flex-col gap-12">
+            <!-- Hero Preview Section -->
+            <div id="hero-preview">
+                <!-- Content injected by JS -->
             </div>
-            <button id="download-btn" class="signature-gradient text-on-primary px-10 py-4 rounded-full font-headline font-bold text-lg hover-lift btn-glow btn-ripple active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="main.download_btn">
-                Скачать
-            </button>
-        </div>
 
-        <!-- Download Queue Section -->
-        <section class="flex flex-col gap-6">
-            <div class="flex items-center justify-between px-2">
-                <h2 class="font-headline font-bold text-xl text-on-surface" data-i18n="main.active_downloads">Активные загрузки</h2>
-                <span id="active-count" class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-label font-semibold"></span>
+            <!-- Input Section -->
+            <div id="url-input-container"
+                class="relative flex flex-col md:flex-row gap-4 p-3 bg-surface-container-lowest rounded-[2rem] shadow-sm border border-surface-container transition-all duration-300">
+                <div class="flex-1 flex items-center px-4 gap-4">
+                    <span class="material-symbols-outlined text-primary">link</span>
+                    <input id="url-input"
+                        class="w-full bg-transparent border-none focus:ring-0 text-xl font-body text-on-surface placeholder:text-on-secondary-container"
+                        data-i18n-placeholder="main.url_placeholder"
+                        placeholder="Вставьте URL или ?запрос для поиска..." type="text" />
+                </div>
+                <button id="download-btn"
+                    class="signature-gradient text-on-primary px-10 py-4 rounded-full font-headline font-bold text-lg hover-lift btn-glow btn-ripple active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    data-i18n="main.download_btn">
+                    Скачать
+                </button>
             </div>
-            <div id="downloads-list" class="space-y-3">
-                <!-- Загрузки будут добавлены сюда динамически -->
-                <div id="empty-state" class="empty-state-glow relative overflow-hidden rounded-[2rem] border border-outline-variant/60 px-6 py-8 md:px-8 md:py-10 text-on-surface shadow-[0_24px_80px_rgba(20,20,20,0.08)]">
-                    <div class="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
-                    <div class="relative flex flex-col gap-6">
-                        <div class="flex flex-col items-center text-center">
-                            <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/12 text-primary shadow-inner shadow-primary/10">
-                                <span class="material-symbols-outlined text-[34px]">download</span>
-                            </div>
-                            <p class="text-2xl font-headline font-extrabold tracking-tight text-on-surface" data-i18n="main.no_downloads">Нет активных загрузок</p>
-                            <p class="mt-2 max-w-xl text-sm leading-6 text-on-surface-variant" data-i18n="main.empty_state_subtitle">Вставьте ссылку, плейлист или поисковый запрос, и StreamVault сразу начнет работу.</p>
+
+            <!-- Download Queue Section -->
+            <section class="flex flex-col gap-6">
+                <div class="flex items-center justify-between px-2">
+                    <h2 class="font-headline font-bold text-xl text-on-surface" data-i18n="main.active_downloads">
+                        Активные загрузки</h2>
+                    <span id="active-count"
+                        class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-label font-semibold"></span>
+                </div>
+                <div id="downloads-list" class="space-y-3">
+                    <!-- Загрузки будут добавлены сюда динамически -->
+                    <div id="empty-state"
+                        class="empty-state-glow relative overflow-hidden rounded-[2rem] border border-outline-variant/60 px-6 py-8 md:px-8 md:py-10 text-on-surface shadow-[0_24px_80px_rgba(20,20,20,0.08)]">
+                        <div
+                            class="absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent">
                         </div>
-                        <div class="grid gap-3 md:grid-cols-3">
-                            <div class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
-                                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                                    <span class="material-symbols-outlined text-[20px]">link</span>
+                        <div class="relative flex flex-col gap-6">
+                            <div class="flex flex-col items-center text-center">
+                                <div
+                                    class="mb-4 flex h-16 w-16 items-center justify-center rounded-[1.25rem] bg-primary/12 text-primary shadow-inner shadow-primary/10">
+                                    <span class="material-symbols-outlined text-[34px]">download</span>
                                 </div>
-                                <p class="font-headline text-sm font-bold text-on-surface" data-i18n="main.empty_state_mode_link_title">Одна ссылка</p>
-                                <p class="mt-1 text-sm leading-5 text-on-surface-variant" data-i18n="main.empty_state_mode_link_text">Для быстрого скачивания видео или Shorts без лишних шагов.</p>
+                                <p class="text-2xl font-headline font-extrabold tracking-tight text-on-surface"
+                                    data-i18n="main.no_downloads">Нет активных загрузок</p>
+                                <p class="mt-2 max-w-xl text-sm leading-6 text-on-surface-variant"
+                                    data-i18n="main.empty_state_subtitle">Вставьте ссылку, плейлист или поисковый
+                                    запрос, и StreamVault сразу начнет работу.</p>
                             </div>
-                            <div class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
-                                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-tertiary/10 text-tertiary">
-                                    <span class="material-symbols-outlined text-[20px]">queue_music</span>
+                            <div class="grid gap-3 md:grid-cols-3">
+                                <div
+                                    class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
+                                    <div
+                                        class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                        <span class="material-symbols-outlined text-[20px]">link</span>
+                                    </div>
+                                    <p class="font-headline text-sm font-bold text-on-surface"
+                                        data-i18n="main.empty_state_mode_link_title">Одна ссылка</p>
+                                    <p class="mt-1 text-sm leading-5 text-on-surface-variant"
+                                        data-i18n="main.empty_state_mode_link_text">Для быстрого скачивания видео или
+                                        Shorts без лишних шагов.</p>
                                 </div>
-                                <p class="font-headline text-sm font-bold text-on-surface" data-i18n="main.empty_state_mode_playlist_title">Плейлист</p>
-                                <p class="mt-1 text-sm leading-5 text-on-surface-variant" data-i18n="main.empty_state_mode_playlist_text">Откроется выбор роликов, чтобы скачать всё или только нужное.</p>
+                                <div
+                                    class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
+                                    <div
+                                        class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-tertiary/10 text-tertiary">
+                                        <span class="material-symbols-outlined text-[20px]">queue_music</span>
+                                    </div>
+                                    <p class="font-headline text-sm font-bold text-on-surface"
+                                        data-i18n="main.empty_state_mode_playlist_title">Плейлист</p>
+                                    <p class="mt-1 text-sm leading-5 text-on-surface-variant"
+                                        data-i18n="main.empty_state_mode_playlist_text">Откроется выбор роликов, чтобы
+                                        скачать всё или только нужное.</p>
+                                </div>
+                                <div
+                                    class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
+                                    <div
+                                        class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary-container text-on-secondary-container">
+                                        <span class="material-symbols-outlined text-[20px]">travel_explore</span>
+                                    </div>
+                                    <p class="font-headline text-sm font-bold text-on-surface"
+                                        data-i18n="main.empty_state_mode_search_title">Поиск</p>
+                                    <p class="mt-1 text-sm leading-5 text-on-surface-variant"
+                                        data-i18n="main.empty_state_mode_search_text">Начните с ?, чтобы искать видео
+                                        прямо внутри приложения.</p>
+                                </div>
                             </div>
-                            <div class="rounded-[1.5rem] border border-outline-variant/60 bg-surface-container-lowest/80 p-4 text-left backdrop-blur-sm">
-                                <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary-container text-on-secondary-container">
-                                    <span class="material-symbols-outlined text-[20px]">travel_explore</span>
-                                </div>
-                                <p class="font-headline text-sm font-bold text-on-surface" data-i18n="main.empty_state_mode_search_title">Поиск</p>
-                                <p class="mt-1 text-sm leading-5 text-on-surface-variant" data-i18n="main.empty_state_mode_search_text">Начните с ?, чтобы искать видео прямо внутри приложения.</p>
-                            </div>
-                        </div>
-                        <div class="rounded-[1.5rem] border border-dashed border-outline-variant/80 bg-surface-container-lowest/70 p-4">
-                            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold uppercase tracking-[0.22em] text-on-surface-variant" data-i18n="main.empty_state_try_title">Попробовать сейчас</p>
-                                    <p class="mt-1 text-sm text-on-surface-variant" data-i18n="main.empty_state_try_subtitle">Нажмите на пример, и он подставится в поле ввода.</p>
-                                </div>
-                                <div class="flex flex-wrap justify-center gap-2 md:justify-end">
-                                    <button type="button" class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary" data-fill="?lofi mix">
-                                        <span data-i18n="main.empty_state_chip_search">?lofi mix</span>
-                                    </button>
-                                    <button type="button" class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary" data-fill="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-                                        <span data-i18n="main.empty_state_chip_video">Пример ссылки</span>
-                                    </button>
-                                    <button type="button" class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary" data-fill="https://www.youtube.com/playlist?list=PL">
-                                        <span data-i18n="main.empty_state_chip_playlist">Пример плейлиста</span>
-                                    </button>
+                            <div
+                                class="rounded-[1.5rem] border border-dashed border-outline-variant/80 bg-surface-container-lowest/70 p-4">
+                                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                    <div>
+                                        <p class="text-sm font-semibold uppercase tracking-[0.22em] text-on-surface-variant"
+                                            data-i18n="main.empty_state_try_title">Попробовать сейчас</p>
+                                        <p class="mt-1 text-sm text-on-surface-variant"
+                                            data-i18n="main.empty_state_try_subtitle">Нажмите на пример, и он
+                                            подставится в поле ввода.</p>
+                                    </div>
+                                    <div class="flex flex-wrap justify-center gap-2 md:justify-end">
+                                        <button type="button"
+                                            class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                                            data-fill="?lofi mix">
+                                            <span data-i18n="main.empty_state_chip_search">?lofi mix</span>
+                                        </button>
+                                        <button type="button"
+                                            class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                                            data-fill="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                                            <span data-i18n="main.empty_state_chip_video">Пример ссылки</span>
+                                        </button>
+                                        <button type="button"
+                                            class="empty-state-chip quick-fill-btn rounded-full border border-outline-variant bg-surface-container-high px-4 py-2 text-sm font-semibold text-on-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                                            data-fill="https://www.youtube.com/playlist?list=PL">
+                                            <span data-i18n="main.empty_state_chip_playlist">Пример плейлиста</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
-</main>
+            </section>
+        </div>
+    </main>
 
-<script>
-const API_URL = window.location.origin;
-const downloadsList = document.getElementById('downloads-list');
-const urlInput = document.getElementById('url-input');
-const downloadBtn = document.getElementById('download-btn');
-const activeCount = document.getElementById('active-count');
-const emptyState = document.getElementById('empty-state');
+    <script>
+        const API_URL = window.location.origin;
+        const downloadsList = document.getElementById('downloads-list');
+        const urlInput = document.getElementById('url-input');
+        const downloadBtn = document.getElementById('download-btn');
+        const activeCount = document.getElementById('active-count');
+        const emptyState = document.getElementById('empty-state');
+        let appSettings = null;
 
-// --- Ripple Effect ---
-function createRipple(event, element) {
-    const circle = document.createElement('span');
-    const diameter = Math.max(element.clientWidth, element.clientHeight);
-    const radius = diameter / 2;
-
-    const rect = element.getBoundingClientRect();
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - rect.left - radius}px`;
-    circle.style.top = `${event.clientY - rect.top - radius}px`;
-    circle.classList.add('ripple');
-
-    const ripple = element.getElementsByClassName('ripple')[0];
-    if (ripple) {
-        ripple.remove();
-    }
-    element.appendChild(circle);
-}
-
-document.querySelectorAll('.btn-ripple').forEach(btn => {
-    btn.addEventListener('click', (e) => createRipple(e, btn));
-});
-
-document.querySelectorAll('.quick-fill-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        urlInput.value = btn.dataset.fill || '';
-        urlInput.focus();
-        urlInput.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-});
-
-// --- i18n ---
-let translations = {};
-let currentLang = 'ru';
-
-function getCachedLang() {
-    return localStorage.getItem('sv_language') || 'ru';
-}
-
-function getCachedTranslations(lang) {
-    try {
-        const data = localStorage.getItem(`sv_i18n_${lang}`);
-        return data ? JSON.parse(data) : null;
-    } catch { return null; }
-}
-
-function cacheTranslations(lang, data) {
-    try {
-        localStorage.setItem(`sv_i18n_${lang}`, JSON.stringify(data));
-    } catch {}
-}
-
-async function loadTranslations(lang) {
-    try {
-        const res = await fetch(`${API_URL}/api/i18n/${lang}`);
-        if (res.ok) {
-            const data = await res.json();
-            cacheTranslations(lang, data);
-            return data;
+        async function fetchSettings() {
+            try {
+                const res = await fetch(`${API_URL}/api/settings`);
+                if (res.ok) appSettings = await res.json();
+            } catch (e) {}
         }
-    } catch (e) {
-        console.warn('Failed to fetch translations:', e);
-    }
-    return null;
-}
+        fetchSettings();
 
-function t(key, params = {}) {
-    const keys = key.split('.');
-    let val = translations;
-    for (const k of keys) {
-        if (val && typeof val === 'object' && k in val) {
-            val = val[k];
-        } else {
-            return key;
-        }
-    }
-    if (typeof val !== 'string') return key;
-    return val.replace(/\{(\w+)\}/g, (_, p) => params[p] ?? `{${p}}`);
-}
+        // --- Ripple Effect ---
+        function createRipple(event, element) {
+            const circle = document.createElement('span');
+            const diameter = Math.max(element.clientWidth, element.clientHeight);
+            const radius = diameter / 2;
 
-function applyTranslations() {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        el.textContent = t(key);
-    });
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        el.placeholder = t(key);
-    });
-    document.querySelectorAll('[data-i18n-title]').forEach(el => {
-        const key = el.getAttribute('data-i18n-title');
-        el.title = t(key);
-    });
-}
+            const rect = element.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - rect.left - radius}px`;
+            circle.style.top = `${event.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
 
-async function initI18n() {
-    // 1. Мгновенно: читаем язык из кеша
-    currentLang = getCachedLang();
-    const cached = getCachedTranslations(currentLang);
-    if (cached) {
-        translations = cached;
-        applyTranslations();
-    }
-
-    // 2. Фон: проверяем сервер (язык мог измениться)
-    try {
-        const settingsRes = await fetch(`${API_URL}/api/settings`);
-        if (settingsRes.ok) {
-            const settings = await settingsRes.json();
-            const serverLang = settings.language || 'ru';
-            if (serverLang !== currentLang) {
-                currentLang = serverLang;
-                localStorage.setItem('sv_language', serverLang);
+            const ripple = element.getElementsByClassName('ripple')[0];
+            if (ripple) {
+                ripple.remove();
             }
-            // Загружаем/обновляем переводы
-            const fresh = await loadTranslations(currentLang);
-            if (fresh) {
-                translations = fresh;
-                applyTranslations();
-            }
-        }
-    } catch (e) {
-        // Сервер недоступен — используем кеш
-    }
-}
-
-// Вызываем СРАЗУ — переводы применятся мгновенно из кеша
-initI18n();
-
-// --- Drag & Drop ---
-const urlInputContainer = document.getElementById('url-input-container');
-
-urlInputContainer.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    urlInputContainer.classList.add('drag-over');
-});
-
-urlInputContainer.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    urlInputContainer.classList.remove('drag-over');
-});
-
-urlInputContainer.addEventListener('drop', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    urlInputContainer.classList.remove('drag-over');
-
-    const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('url');
-    if (url) {
-        urlInput.value = url;
-        updateButtonMode();
-        handleUrlInput();
-    }
-});
-
-// --- Режим кнопки: Скачать / Найти ---
-let isSearchMode = false;
-
-function updateButtonMode() {
-    const val = urlInput.value.trim();
-    const wasSearch = isSearchMode;
-    isSearchMode = val.startsWith('?');
-    if (isSearchMode !== wasSearch) {
-        if (isSearchMode) {
-            downloadBtn.textContent = t('main.search_btn');
-            downloadBtn.classList.remove('signature-gradient');
-            downloadBtn.classList.add('bg-tertiary');
-        } else {
-            downloadBtn.textContent = t('main.download_btn');
-            downloadBtn.classList.add('signature-gradient');
-            downloadBtn.classList.remove('bg-tertiary');
-        }
-    }
-}
-
-urlInput.addEventListener('input', () => {
-    updateButtonMode();
-    handleUrlInput();
-});
-
-urlInput.addEventListener('paste', () => {
-    // Ждём пока значение обновится после вставки
-    setTimeout(handleUrlInput, 10);
-});
-
-// WebSocket подключение
-let ws = null;
-function connectWebSocket() {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
-    
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'progress_update') {
-            renderDownloads(data.tasks);
-            activeCount.textContent = t('common.items_count', { count: data.active_count });
-        } else if (data.type === 'notification') {
-            showToast(data.message, data.title);
-        }
-    };
-    
-    ws.onclose = () => {
-        setTimeout(connectWebSocket, 2000);
-    };
-}
-
-// Загрузка видео
-let currentPlaylistUrl = '';
-let playlistEntries = [];
-let selectedIndices = new Set();
-let searchResults = [];    // результаты поиска
-let isSearchDialog = false; // true = диалог показывает поиск, false = плейлист
-
-downloadBtn.addEventListener('click', async () => {
-    const raw = urlInput.value.trim();
-    if (!raw) return;
-
-    // === РЕЖИМ ПОИСКА ===
-    if (raw.startsWith('?')) {
-        const query = raw.substring(1).trim();
-        if (!query) return;
-
-        downloadBtn.disabled = true;
-        downloadBtn.textContent = t('main.search_btn_searching');
-
-        try {
-            const response = await fetch(`${API_URL}/api/search`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query, limit: 10 })
-            });
-
-            const data = await response.json();
-
-            if (data.error) {
-                showToast(data.error);
-            } else if (data.results && data.results.length > 0) {
-                searchResults = data.results;
-                selectedIndices = new Set();
-                isSearchDialog = true;
-                showSearchDialog(data);
-            } else {
-                showToast(t('main.search_no_results', { query }));
-            }
-        } catch (err) {
-            console.error('Search error:', err);
-            showToast('Search error');
-        } finally {
-            downloadBtn.disabled = false;
-            downloadBtn.textContent = t('main.search_btn');
-        }
-        return;
-    }
-
-    // === РЕЖИМ ЗАГРУЗКИ (оригинальная логика) ===
-    const url = raw;
-
-    // Проверка на корректность YouTube ссылки
-    if (!isValidYoutubeUrl(url)) {
-        showToast(t('notifications.invalid_youtube_url'));
-        return;
-    }
-
-    downloadBtn.disabled = true;
-    downloadBtn.textContent = t('main.download_btn_checking');
-
-    const settingsLink = document.getElementById('settings-link');
-    settingsLink.classList.add('pointer-events-none', 'opacity-50');
-
-    try {
-        // Быстрая проверка на одиночное видео по URL — без запроса к API
-        if (isSingleVideoUrl(url)) {
-            await startDownload(url);
-            return;
+            element.appendChild(circle);
         }
 
-        // Запрашиваем API только для потенциальных плейлистов
-        const response = await fetch(`${API_URL}/api/playlist/info`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url })
+        document.querySelectorAll('.btn-ripple').forEach(btn => {
+            btn.addEventListener('click', (e) => createRipple(e, btn));
         });
 
-        const data = await response.json();
+        document.querySelectorAll('.quick-fill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                urlInput.value = btn.dataset.fill || '';
+                urlInput.focus();
+                urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+            });
+        });
 
-        if (data.error) {
-            // Ошибка при получении плейлиста — пробуем как обычное видео
-            await startDownload(url);
-        } else if (data.is_playlist && data.entries && data.entries.length >= 2) {
-            // Настоящий плейлист — открываем диалог выбора
-            currentPlaylistUrl = url;
-            playlistEntries = data.entries;
-            selectedIndices = new Set();
-            isSearchDialog = false;
-            showPlaylistDialog(data);
-        } else {
-            // Одно видео (или ошибка детекции) — скачиваем напрямую
-            await startDownload(url);
+        // --- i18n ---
+        let translations = {};
+        let currentLang = 'ru';
+
+        function getCachedLang() {
+            return localStorage.getItem('sv_language') || 'ru';
         }
-    } catch (err) {
-        console.error('Ошибка при проверке URL:', err);
-        await startDownload(url);
-    } finally {
-        downloadBtn.disabled = false;
-        downloadBtn.textContent = t('main.download_btn');
-        settingsLink.classList.remove('pointer-events-none', 'opacity-50');
-    }
-});
 
-// --- ПОИСК: показать диалог результатов ---
-function showSearchDialog(data) {
-    const dialog = document.getElementById('playlist-dialog');
-    const title = document.getElementById('playlist-title');
-    const count = document.getElementById('playlist-count');
+        function getCachedTranslations(lang) {
+            try {
+                const data = localStorage.getItem(`sv_i18n_${lang}`);
+                return data ? JSON.parse(data) : null;
+            } catch { return null; }
+        }
 
-    title.textContent = t('main.search_title');
-    count.textContent = t('main.search_results_count', { count: data.count, query: data.query });
+        function cacheTranslations(lang, data) {
+            try {
+                localStorage.setItem(`sv_i18n_${lang}`, JSON.stringify(data));
+            } catch { }
+        }
 
-    renderSearchResults(data.results);
-    updateSearchDownloadButton();
+        async function loadTranslations(lang) {
+            try {
+                const res = await fetch(`${API_URL}/api/i18n/${lang}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    cacheTranslations(lang, data);
+                    return data;
+                }
+            } catch (e) {
+                console.warn('Failed to fetch translations:', e);
+            }
+            return null;
+        }
 
-    dialog.classList.remove('hidden');
-    dialog.classList.add('flex');
-}
+        function t(key, params = {}) {
+            const keys = key.split('.');
+            let val = translations;
+            for (const k of keys) {
+                if (val && typeof val === 'object' && k in val) {
+                    val = val[k];
+                } else {
+                    return key;
+                }
+            }
+            if (typeof val !== 'string') return key;
+            return val.replace(/\{(\w+)\}/g, (_, p) => params[p] ?? `{${p}}`);
+        }
 
-function formatViewCount(count) {
-    if (!count) return '';
-    if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M';
-    if (count >= 1000) return (count / 1000).toFixed(1) + 'K';
-    return String(count);
-}
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.getAttribute('data-i18n-title');
+                el.title = t(key);
+            });
+        }
 
-function renderSearchResults(results) {
-    const container = document.getElementById('playlist-videos');
+        async function initI18n() {
+            // 1. Мгновенно: читаем язык из кеша
+            currentLang = getCachedLang();
+            const cached = getCachedTranslations(currentLang);
+            if (cached) {
+                translations = cached;
+                applyTranslations();
+            }
 
-    container.innerHTML = results.map(entry => `
+            // 2. Фон: проверяем сервер (язык мог измениться)
+            try {
+                const settingsRes = await fetch(`${API_URL}/api/settings`);
+                if (settingsRes.ok) {
+                    const settings = await settingsRes.json();
+                    const serverLang = settings.language || 'ru';
+                    if (serverLang !== currentLang) {
+                        currentLang = serverLang;
+                        localStorage.setItem('sv_language', serverLang);
+                    }
+                    // Загружаем/обновляем переводы
+                    const fresh = await loadTranslations(currentLang);
+                    if (fresh) {
+                        translations = fresh;
+                        applyTranslations();
+                    }
+                }
+            } catch (e) {
+                // Сервер недоступен — используем кеш
+            }
+        }
+
+        // Вызываем СРАЗУ — переводы применятся мгновенно из кеша
+        initI18n();
+
+        // --- Drag & Drop ---
+        const urlInputContainer = document.getElementById('url-input-container');
+
+        urlInputContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            urlInputContainer.classList.add('drag-over');
+        });
+
+        urlInputContainer.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            urlInputContainer.classList.remove('drag-over');
+        });
+
+        urlInputContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            urlInputContainer.classList.remove('drag-over');
+
+            const url = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('url');
+            if (url) {
+                urlInput.value = url;
+                updateButtonMode();
+                handleUrlInput();
+            }
+        });
+
+        // --- Режим кнопки: Скачать / Найти ---
+        let isSearchMode = false;
+
+        function updateButtonMode() {
+            const val = urlInput.value.trim();
+            const wasSearch = isSearchMode;
+            isSearchMode = val.startsWith('?');
+            if (isSearchMode !== wasSearch) {
+                if (isSearchMode) {
+                    downloadBtn.textContent = t('main.search_btn');
+                    downloadBtn.classList.remove('signature-gradient');
+                    downloadBtn.classList.add('bg-tertiary');
+                } else {
+                    downloadBtn.textContent = t('main.download_btn');
+                    downloadBtn.classList.add('signature-gradient');
+                    downloadBtn.classList.remove('bg-tertiary');
+                }
+            }
+        }
+
+        urlInput.addEventListener('input', () => {
+            updateButtonMode();
+            handleUrlInput();
+        });
+
+        urlInput.addEventListener('paste', () => {
+            // Ждём пока значение обновится после вставки
+            setTimeout(handleUrlInput, 10);
+        });
+
+        // WebSocket подключение
+        let ws = null;
+        function connectWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'progress_update') {
+                    renderDownloads(data.tasks);
+                    activeCount.textContent = t('common.items_count', { count: data.active_count });
+                } else if (data.type === 'notification') {
+                    showToast(data.message, data.title);
+                }
+            };
+
+            ws.onclose = () => {
+                setTimeout(connectWebSocket, 2000);
+            };
+        }
+
+        // Загрузка видео
+        let currentPlaylistUrl = '';
+        let playlistEntries = [];
+        let selectedIndices = new Set();
+        let searchResults = [];    // результаты поиска
+        let isSearchDialog = false; // true = диалог показывает поиск, false = плейлист
+
+        downloadBtn.addEventListener('click', async () => {
+            const raw = urlInput.value.trim();
+            if (!raw) return;
+
+            // === РЕЖИМ ПОИСКА ===
+            if (raw.startsWith('?')) {
+                const query = raw.substring(1).trim();
+                if (!query) return;
+
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = t('main.search_btn_searching');
+
+                try {
+                    const response = await fetch(`${API_URL}/api/search`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query, limit: 10 })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        showToast(data.error);
+                    } else if (data.results && data.results.length > 0) {
+                        searchResults = data.results;
+                        selectedIndices = new Set();
+                        isSearchDialog = true;
+                        showSearchDialog(data);
+                    } else {
+                        showToast(t('main.search_no_results', { query }));
+                    }
+                } catch (err) {
+                    console.error('Search error:', err);
+                    showToast('Search error');
+                } finally {
+                    downloadBtn.disabled = false;
+                    downloadBtn.textContent = t('main.search_btn');
+                }
+                return;
+            }
+
+            // === РЕЖИМ ЗАГРУЗКИ (оригинальная логика) ===
+            const url = raw;
+
+            // Проверка на корректность YouTube ссылки
+            if (!isValidYoutubeUrl(url)) {
+                showToast(t('notifications.invalid_youtube_url'));
+                return;
+            }
+
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = t('main.download_btn_checking');
+
+            const settingsLink = document.getElementById('settings-link');
+            settingsLink.classList.add('pointer-events-none', 'opacity-50');
+
+            try {
+                // Быстрая проверка на одиночное видео по URL — без запроса к API
+                if (isSingleVideoUrl(url)) {
+                    await startDownload(url);
+                    return;
+                }
+
+                // Запрашиваем API только для потенциальных плейлистов
+                const response = await fetch(`${API_URL}/api/playlist/info`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    // Ошибка при получении плейлиста — пробуем как обычное видео
+                    await startDownload(url);
+                } else if (data.is_playlist && data.entries && data.entries.length >= 2) {
+                    // Настоящий плейлист — открываем диалог выбора
+                    currentPlaylistUrl = url;
+                    playlistEntries = data.entries;
+                    selectedIndices = new Set();
+                    isSearchDialog = false;
+                    showPlaylistDialog(data);
+                } else {
+                    // Одно видео (или ошибка детекции) — скачиваем напрямую
+                    await startDownload(url);
+                }
+            } catch (err) {
+                console.error('Ошибка при проверке URL:', err);
+                await startDownload(url);
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = t('main.download_btn');
+                settingsLink.classList.remove('pointer-events-none', 'opacity-50');
+            }
+        });
+
+        // --- ПОИСК: показать диалог результатов ---
+        function showSearchDialog(data) {
+            const dialog = document.getElementById('playlist-dialog');
+            const title = document.getElementById('playlist-title');
+            const count = document.getElementById('playlist-count');
+
+            title.textContent = t('main.search_title');
+            count.textContent = t('main.search_results_count', { count: data.count, query: data.query });
+
+            renderSearchResults(data.results);
+            updateSearchDownloadButton();
+
+            dialog.classList.remove('hidden');
+            dialog.classList.add('flex');
+        }
+
+        function formatViewCount(count) {
+            if (!count) return '';
+            if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M';
+            if (count >= 1000) return (count / 1000).toFixed(1) + 'K';
+            return String(count);
+        }
+
+        function renderSearchResults(results) {
+            const container = document.getElementById('playlist-videos');
+
+            container.innerHTML = results.map(entry => `
         <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors group">
             <input type="checkbox" class="playlist-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-2 bg-surface-container-high shrink-0" data-index="${entry.index}" onchange="toggleVideoSelection(${entry.index}, this.checked)">
             <div class="relative shrink-0">
@@ -945,237 +1179,281 @@ function renderSearchResults(results) {
             <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity text-[20px] shrink-0">play_circle</span>
         </label>
     `).join('');
-}
-
-function updateSearchDownloadButton() {
-    const btn = document.getElementById('playlist-download-btn');
-    btn.textContent = t('main.search_download_selected', { count: selectedIndices.size });
-    btn.disabled = selectedIndices.size === 0;
-}
-
-/**
- * Возвращает true если это корректная ссылка на YouTube.
- */
-function isValidYoutubeUrl(url) {
-    try {
-        const u = new URL(url);
-        const host = u.hostname.replace('www.', '');
-        const validHosts = ['youtube.com', 'youtu.be', 'm.youtube.com', 'music.youtube.com'];
-        
-        // Проверяем хост
-        if (!validHosts.includes(host)) return false;
-        
-        // Для youtube.com проверяем наличие параметров или путей (чтобы не пропускать просто youtube.com)
-        if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com') {
-            return u.pathname === '/watch' || u.pathname === '/playlist' || u.pathname.startsWith('/shorts/') || u.pathname.startsWith('/v/');
-        }
-        
-        // youtu.be/ID — всегда валидно если есть путь
-        if (host === 'youtu.be') {
-            return u.pathname.length > 1;
         }
 
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-/**
- * Возвращает true если URL явно указывает на одиночное видео.
- * youtu.be/ID — всегда одиночное
- * youtube.com/watch?v=ID — одиночное, если нет параметра &list=
- */
-function isSingleVideoUrl(url) {
-    try {
-        const u = new URL(url);
-        const host = u.hostname.replace('www.', '');
-
-        // youtu.be/VIDEO_ID — короткая ссылка, всегда одно видео
-        if (host === 'youtu.be') return true;
-
-        // youtube.com/watch?v=ID — одиночное видео только без &list=
-        if ((host === 'youtube.com' || host === 'm.youtube.com') && u.pathname === '/watch') {
-            return !u.searchParams.has('list');
+        function updateSearchDownloadButton() {
+            const btn = document.getElementById('playlist-download-btn');
+            btn.textContent = t('main.search_download_selected', { count: selectedIndices.size });
+            btn.disabled = selectedIndices.size === 0;
         }
 
-        return false;
-    } catch {
-        return false;
-    }
-}
+        /**
+         * Возвращает true если это корректная ссылка на YouTube.
+         */
+        function isValidYoutubeUrl(url) {
+            try {
+                const u = new URL(url);
+                const host = u.hostname.replace('www.', '');
+                const validHosts = ['youtube.com', 'youtu.be', 'm.youtube.com', 'music.youtube.com'];
 
-async function startDownload(url) {
-    try {
-        const response = await fetch(`${API_URL}/api/download`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url })
-        });
+                // Проверяем хост
+                if (!validHosts.includes(host)) return false;
 
-        if (response.ok) {
-            urlInput.value = '';
-            clearHeroPreview();
-            showSuccessState();
+                // Для youtube.com проверяем наличие параметров или путей (чтобы не пропускать просто youtube.com)
+                if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com') {
+                    return u.pathname === '/watch' || u.pathname === '/playlist' || u.pathname.startsWith('/shorts/') || u.pathname.startsWith('/v/');
+                }
+
+                // youtu.be/ID — всегда валидно если есть путь
+                if (host === 'youtu.be') {
+                    return u.pathname.length > 1;
+                }
+
+                return true;
+            } catch {
+                return false;
+            }
         }
-    } catch (err) {
-        console.error('Ошибка при загрузке:', err);
-    }
-}
 
-function showSuccessState() {
-    const originalContent = downloadBtn.innerHTML;
-    const originalClasses = downloadBtn.className;
-    
-    downloadBtn.classList.add('success-state');
-    downloadBtn.innerHTML = `
+        /**
+         * Возвращает true если URL явно указывает на одиночное видео.
+         * youtu.be/ID — всегда одиночное
+         * youtube.com/watch?v=ID — одиночное, если нет параметра &list=
+         */
+        function isSingleVideoUrl(url) {
+            try {
+                const u = new URL(url);
+                const host = u.hostname.replace('www.', '');
+
+                // youtu.be/VIDEO_ID — короткая ссылка, всегда одно видео
+                if (host === 'youtu.be') return true;
+
+                // youtube.com/watch?v=ID — одиночное видео только без &list=
+                if ((host === 'youtube.com' || host === 'm.youtube.com') && u.pathname === '/watch') {
+                    return !u.searchParams.has('list');
+                }
+
+                return false;
+            } catch {
+                return false;
+            }
+        }
+
+        async function startDownload(url) {
+            try {
+                const response = await fetch(`${API_URL}/api/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                if (response.ok) {
+                    urlInput.value = '';
+                    clearHeroPreview();
+                    showSuccessState();
+                }
+            } catch (err) {
+                console.error('Ошибка при загрузке:', err);
+            }
+        }
+
+        function showSuccessState() {
+            const originalContent = downloadBtn.innerHTML;
+            const originalClasses = downloadBtn.className;
+
+            downloadBtn.classList.add('success-state');
+            downloadBtn.innerHTML = `
         <div class="flex items-center gap-2">
             <span class="material-symbols-outlined">check_circle</span>
             <span data-i18n="status.completed">${t('status.completed')}</span>
         </div>
     `;
 
-    setTimeout(() => {
-        downloadBtn.classList.remove('success-state');
-        downloadBtn.innerHTML = originalContent;
-        // Re-apply translation if needed
-        applyTranslations();
-    }, 2000);
-}
+            setTimeout(() => {
+                downloadBtn.classList.remove('success-state');
+                downloadBtn.innerHTML = originalContent;
+                // Re-apply translation if needed
+                applyTranslations();
+            }, 2000);
+        }
 
-// --- Hero Preview Logic ---
-const heroPreview = document.getElementById('hero-preview');
-let previewAbortController = null;
-let lastPreviewUrl = '';
+        // --- Hero Preview Logic ---
+        const heroPreview = document.getElementById('hero-preview');
+        let previewAbortController = null;
+        let lastPreviewUrl = '';
 
-function showHeroLoading() {
-    heroPreview.classList.add('show');
-    heroPreview.innerHTML = `
-        <div class="preview-card animate-pulse">
-            <div class="preview-thumbnail-container shimmer rounded-[1.75rem]"></div>
-            <div class="flex-1 space-y-4 py-2">
-                <div class="h-6 bg-surface-container-high rounded-full w-3/4 shimmer"></div>
-                <div class="h-4 bg-surface-container-high rounded-full w-1/2 shimmer"></div>
-                <div class="flex gap-2">
-                    <div class="h-6 bg-surface-container-high rounded-lg w-16 shimmer"></div>
-                    <div class="h-6 bg-surface-container-high rounded-lg w-16 shimmer"></div>
+        function initHeroParallax(card) {
+            const container = card.parentElement;
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+                card.style.setProperty('--rx', `${y * -12}deg`);
+                card.style.setProperty('--ry', `${x * 12}deg`);
+                
+                const thumb = card.querySelector('.hero-thumbnail-container');
+                if (thumb) {
+                    thumb.style.transform = `translateZ(60px) translateX(${x * 15}px) translateY(${y * 15}px)`;
+                }
+            });
+
+            container.addEventListener('mouseleave', () => {
+                card.style.setProperty('--rx', '0deg');
+                card.style.setProperty('--ry', '0deg');
+                const thumb = card.querySelector('.hero-thumbnail-container');
+                if (thumb) {
+                    thumb.style.transform = 'translateZ(50px) translateX(0) translateY(0)';
+                }
+            });
+        }
+
+        function showHeroLoading() {
+            heroPreview.classList.add('show');
+            heroPreview.innerHTML = `
+        <div class="hero-container">
+            <div class="hero-card animate-pulse">
+                <div class="hero-card-content">
+                    <div class="hero-thumbnail-container">
+                        <div class="hero-thumbnail shimmer"></div>
+                    </div>
+                    <div class="flex-1 space-y-4 py-2">
+                        <div class="h-8 bg-surface-container-high rounded-full w-3/4 shimmer"></div>
+                        <div class="h-6 bg-surface-container-high rounded-full w-1/2 shimmer"></div>
+                        <div class="flex gap-2">
+                            <div class="h-8 bg-surface-container-high rounded-lg w-20 shimmer"></div>
+                            <div class="h-8 bg-surface-container-high rounded-lg w-20 shimmer"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
-}
-
-function clearHeroPreview() {
-    heroPreview.classList.remove('show');
-    lastPreviewUrl = '';
-    if (previewAbortController) {
-        previewAbortController.abort();
-        previewAbortController = null;
-    }
-}
-
-async function handleUrlInput() {
-    const url = urlInput.value.trim();
-    
-    if (!url || url.startsWith('?') || !isValidYoutubeUrl(url)) {
-        clearHeroPreview();
-        return;
-    }
-
-    if (url === lastPreviewUrl) return;
-    lastPreviewUrl = url;
-
-    if (previewAbortController) {
-        previewAbortController.abort();
-    }
-    previewAbortController = new AbortController();
-
-    showHeroLoading();
-
-    try {
-        const response = await fetch(`${API_URL}/api/info`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url }),
-            signal: previewAbortController.signal
-        });
-
-        const data = await response.json();
-        if (data.error) {
-            clearHeroPreview();
-            return;
         }
 
-        renderHeroPreview(data);
-    } catch (err) {
-        if (err.name !== 'AbortError') {
-            console.error('Preview fetch error:', err);
-            clearHeroPreview();
+        function clearHeroPreview() {
+            heroPreview.classList.remove('show');
+            lastPreviewUrl = '';
+            if (previewAbortController) {
+                previewAbortController.abort();
+                previewAbortController = null;
+            }
         }
-    }
-}
 
-function renderHeroPreview(data) {
-    if (!data || data.error) {
-        clearHeroPreview();
-        return;
-    }
+        async function handleUrlInput() {
+            const url = urlInput.value.trim();
 
-    const typeLabel = t(`main.preview_type_${data.type || 'video'}`);
-    const qualityLabel = data.quality ? t('main.preview_quality', { quality: data.quality }) : '';
-    const viewsLabel = data.views ? t('main.preview_views', { count: formatViewCount(data.views) }) : '';
+            if (!url || url.startsWith('?') || !isValidYoutubeUrl(url)) {
+                clearHeroPreview();
+                return;
+            }
 
-    heroPreview.innerHTML = `
-        <div class="preview-card animate-slide-in">
-            <div class="preview-thumbnail-container">
-                <img src="${data.thumbnail}" class="preview-thumbnail shadow-lg" alt="" onerror="this.src='https://i.ytimg.com/vi/placeholder/mqdefault.jpg'">
-                ${data.duration ? `<span class="absolute bottom-3 right-3 bg-black/80 text-white text-xs px-2 py-1 rounded-lg font-mono font-bold tracking-tight">${data.duration}</span>` : ''}
-            </div>
-            <div class="flex-1 flex flex-col justify-center min-w-0 py-2">
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="preview-badge primary">${typeLabel}</span>
-                    ${data.quality ? `<span class="preview-badge">${data.quality}</span>` : ''}
-                </div>
-                <h3 class="text-xl md:text-2xl font-headline font-bold text-on-surface line-clamp-2 leading-tight mb-2" title="${escapeHtml(data.title)}">
-                    ${escapeHtml(data.title)}
-                </h3>
-                <div class="flex items-center gap-3 text-on-surface-variant font-medium">
-                    <span class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-[18px]">person</span>
-                        <span class="truncate">${escapeHtml(data.channel)}</span>
-                    </span>
-                    ${viewsLabel ? `
-                        <span class="flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-[18px]">visibility</span>
-                            <span>${viewsLabel}</span>
-                        </span>
-                    ` : ''}
+            if (url === lastPreviewUrl) return;
+            lastPreviewUrl = url;
+
+            if (previewAbortController) {
+                previewAbortController.abort();
+            }
+            previewAbortController = new AbortController();
+
+            showHeroLoading();
+
+            try {
+                const response = await fetch(`${API_URL}/api/info`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url }),
+                    signal: previewAbortController.signal
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    clearHeroPreview();
+                    return;
+                }
+
+                renderHeroPreview(data);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('Preview fetch error:', err);
+                    clearHeroPreview();
+                }
+            }
+        }
+
+        function renderHeroPreview(data) {
+            if (!data || data.error) {
+                clearHeroPreview();
+                return;
+            }
+
+            const typeLabel = t(`main.preview_type_${data.type || 'video'}`);
+            const formatLabel = appSettings?.download_format?.toUpperCase() || 'MP4';
+            const viewsLabel = data.views ? formatViewCount(data.views) : '';
+
+            heroPreview.style.setProperty('--preview-url', `url('${data.thumbnail}')`);
+
+            heroPreview.innerHTML = `
+        <div class="hero-container">
+            <div class="hero-card animate-slide-in" id="active-hero-card">
+                <div class="hero-card-bg"></div>
+                <div class="hero-card-content">
+                    <div class="hero-thumbnail-container">
+                        <img src="${data.thumbnail}" class="hero-thumbnail" alt="" onerror="this.src='https://i.ytimg.com/vi/placeholder/mqdefault.jpg'">
+                        ${data.duration ? `<span class="absolute bottom-4 right-4 bg-black/80 text-white text-sm px-2.5 py-1 rounded-xl font-mono font-bold tracking-tight backdrop-blur-md border border-white/10">${data.duration}</span>` : ''}
+                    </div>
+                    <div class="flex-1 flex flex-col justify-center min-w-0 py-2">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="hero-badge primary">${typeLabel}</span>
+                            <span class="hero-badge accent">${formatLabel}</span>
+                            ${data.quality ? `<span class="hero-badge">${data.quality}</span>` : ''}
+                        </div>
+                        <h3 class="text-2xl md:text-3xl font-headline font-bold text-on-surface line-clamp-2 leading-tight mb-4" title="${escapeHtml(data.title)}">
+                            ${escapeHtml(data.title)}
+                        </h3>
+                        <div class="flex items-center gap-4 text-on-surface-variant font-semibold">
+                            <span class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-primary">person</span>
+                                <span class="truncate">${escapeHtml(data.channel)}</span>
+                            </span>
+                            ${viewsLabel ? `
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[20px] text-tertiary">visibility</span>
+                                    <span>${t('main.preview_views', { count: viewsLabel })}</span>
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `;
-}
+            
+            const card = document.getElementById('active-hero-card');
+            if (card) initHeroParallax(card);
+        }
 
-// Playlist Dialog
-function showPlaylistDialog(data) {
-    const dialog = document.getElementById('playlist-dialog');
-    const title = document.getElementById('playlist-title');
-    const count = document.getElementById('playlist-count');
+        // Playlist Dialog
+        function showPlaylistDialog(data) {
+            const dialog = document.getElementById('playlist-dialog');
+            const title = document.getElementById('playlist-title');
+            const count = document.getElementById('playlist-count');
 
-    title.textContent = data.title;
-    count.textContent = t('main.videos_count', { count: data.entries.length });
+            title.textContent = data.title;
+            count.textContent = t('main.videos_count', { count: data.entries.length });
 
-    renderPlaylistVideos(data.entries);
-    updateDownloadButton();
+            renderPlaylistVideos(data.entries);
+            updateDownloadButton();
 
-    dialog.classList.remove('hidden');
-    dialog.classList.add('flex');
-}
+            dialog.classList.remove('hidden');
+            dialog.classList.add('flex');
+        }
 
-function renderPlaylistVideos(entries) {
-    const container = document.getElementById('playlist-videos');
+        function renderPlaylistVideos(entries) {
+            const container = document.getElementById('playlist-videos');
 
-    container.innerHTML = entries.map(entry => `
+            container.innerHTML = entries.map(entry => `
         <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-surface-container-low cursor-pointer transition-colors group">
             <input type="checkbox" class="playlist-checkbox w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-2 bg-surface-container-high shrink-0" data-index="${entry.index}" onchange="toggleVideoSelection(${entry.index}, this.checked)">
             <img src="${entry.thumbnail}" alt="" class="w-16 h-12 object-cover rounded-lg bg-surface-container-high shrink-0" loading="lazy" onerror="this.style.display='none'">
@@ -1186,142 +1464,142 @@ function renderPlaylistVideos(entries) {
             <span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity text-[20px] shrink-0">play_circle</span>
         </label>
     `).join('');
-}
+        }
 
-window.toggleVideoSelection = function(index, checked) {
-    if (checked) {
-        selectedIndices.add(index);
-    } else {
-        selectedIndices.delete(index);
-    }
-    if (isSearchDialog) {
-        updateSearchDownloadButton();
-    } else {
-        updateDownloadButton();
-    }
-}
-
-function updateDownloadButton() {
-    const btn = document.getElementById('playlist-download-btn');
-    btn.textContent = t('main.download_selected', { count: selectedIndices.size });
-    btn.disabled = selectedIndices.size === 0;
-}
-
-// Закрытие диалога
-document.getElementById('playlist-close').addEventListener('click', closePlaylistDialog);
-document.getElementById('playlist-dialog').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) closePlaylistDialog();
-});
-
-function closePlaylistDialog() {
-    const dialog = document.getElementById('playlist-dialog');
-    dialog.classList.add('hidden');
-    dialog.classList.remove('flex');
-    currentPlaylistUrl = '';
-    playlistEntries = [];
-    searchResults = [];
-    selectedIndices = new Set();
-    isSearchDialog = false;
-    clearHeroPreview();
-}
-
-// Выбрать все
-document.getElementById('select-all-btn').addEventListener('click', () => {
-    const entries = isSearchDialog ? searchResults : playlistEntries;
-    entries.forEach(entry => selectedIndices.add(entry.index));
-    document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = true);
-    if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
-});
-
-// Снять все
-document.getElementById('deselect-all-btn').addEventListener('click', () => {
-    selectedIndices.clear();
-    document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = false);
-    if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
-});
-
-// Скачать выбранные (плейлист ИЛИ результаты поиска)
-document.getElementById('playlist-download-btn').addEventListener('click', async () => {
-    if (selectedIndices.size === 0) return;
-
-    const btn = document.getElementById('playlist-download-btn');
-    btn.disabled = true;
-    btn.textContent = t('main.downloading_playlist');
-
-    try {
-        if (isSearchDialog) {
-            // === Загрузка из результатов поиска ===
-            for (const idx of selectedIndices) {
-                const entry = searchResults.find(e => e.index === idx);
-                if (entry && entry.url) {
-                    await fetch(`${API_URL}/api/download`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: entry.url })
-                    });
-                }
+        window.toggleVideoSelection = function (index, checked) {
+            if (checked) {
+                selectedIndices.add(index);
+            } else {
+                selectedIndices.delete(index);
             }
-            urlInput.value = '';
-            updateButtonMode();
-            closePlaylistDialog();
-        } else {
-            // === Загрузка из плейлиста (оригинальная логика) ===
-            const response = await fetch(`${API_URL}/api/playlist/download`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: currentPlaylistUrl, selected_indices: Array.from(selectedIndices) })
-            });
-
-            if (response.ok) {
-                urlInput.value = '';
-                updateButtonMode();
-                closePlaylistDialog();
+            if (isSearchDialog) {
+                updateSearchDownloadButton();
+            } else {
+                updateDownloadButton();
             }
         }
-    } catch (err) {
-        console.error('Ошибка при загрузке:', err);
-    } finally {
-        btn.disabled = false;
-        const countKey = isSearchDialog ? 'main.search_download_selected' : 'main.download_selected';
-        btn.textContent = t(countKey, { count: selectedIndices.size });
-    }
-});
 
-// Ренер списка загрузок
-const renderedTaskIds = new Set();
+        function updateDownloadButton() {
+            const btn = document.getElementById('playlist-download-btn');
+            btn.textContent = t('main.download_selected', { count: selectedIndices.size });
+            btn.disabled = selectedIndices.size === 0;
+        }
 
-function renderDownloads(tasks) {
-    if (tasks.length === 0) {
-        emptyState.style.display = 'block';
-        downloadsList.innerHTML = '';
-        downloadsList.appendChild(emptyState);
-        renderedTaskIds.clear();
-        return;
-    }
-    
-    emptyState.style.display = 'none';
-    const html = tasks.map((task, index) => {
-        const isDownloading = task.status === 'downloading';
-        const isProcessing = task.status === 'processing';
-        const isError = task.status === 'error';
-        const isCompleted = task.status === 'completed';
-        const isPaused = task.status === 'paused';
-        
-        const statusKey = task.detailed_status || task.status;
-        const statusText = t(`status.${statusKey}`);
-        
-        let statusColor = 'text-primary';
-        if (isCompleted) statusColor = 'text-green-600 dark:text-green-400';
-        if (isError) statusColor = 'text-error';
-        if (isPaused) statusColor = 'text-secondary';
-        
-        const showActions = showActionButtons(task.status);
-        const canOpenFile = isCompleted && task.file_path;
-        
-        const isNew = !renderedTaskIds.has(task.id);
-        if (isNew) renderedTaskIds.add(task.id);
+        // Закрытие диалога
+        document.getElementById('playlist-close').addEventListener('click', closePlaylistDialog);
+        document.getElementById('playlist-dialog').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePlaylistDialog();
+        });
 
-        return `
+        function closePlaylistDialog() {
+            const dialog = document.getElementById('playlist-dialog');
+            dialog.classList.add('hidden');
+            dialog.classList.remove('flex');
+            currentPlaylistUrl = '';
+            playlistEntries = [];
+            searchResults = [];
+            selectedIndices = new Set();
+            isSearchDialog = false;
+            clearHeroPreview();
+        }
+
+        // Выбрать все
+        document.getElementById('select-all-btn').addEventListener('click', () => {
+            const entries = isSearchDialog ? searchResults : playlistEntries;
+            entries.forEach(entry => selectedIndices.add(entry.index));
+            document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = true);
+            if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
+        });
+
+        // Снять все
+        document.getElementById('deselect-all-btn').addEventListener('click', () => {
+            selectedIndices.clear();
+            document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = false);
+            if (isSearchDialog) updateSearchDownloadButton(); else updateDownloadButton();
+        });
+
+        // Скачать выбранные (плейлист ИЛИ результаты поиска)
+        document.getElementById('playlist-download-btn').addEventListener('click', async () => {
+            if (selectedIndices.size === 0) return;
+
+            const btn = document.getElementById('playlist-download-btn');
+            btn.disabled = true;
+            btn.textContent = t('main.downloading_playlist');
+
+            try {
+                if (isSearchDialog) {
+                    // === Загрузка из результатов поиска ===
+                    for (const idx of selectedIndices) {
+                        const entry = searchResults.find(e => e.index === idx);
+                        if (entry && entry.url) {
+                            await fetch(`${API_URL}/api/download`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ url: entry.url })
+                            });
+                        }
+                    }
+                    urlInput.value = '';
+                    updateButtonMode();
+                    closePlaylistDialog();
+                } else {
+                    // === Загрузка из плейлиста (оригинальная логика) ===
+                    const response = await fetch(`${API_URL}/api/playlist/download`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: currentPlaylistUrl, selected_indices: Array.from(selectedIndices) })
+                    });
+
+                    if (response.ok) {
+                        urlInput.value = '';
+                        updateButtonMode();
+                        closePlaylistDialog();
+                    }
+                }
+            } catch (err) {
+                console.error('Ошибка при загрузке:', err);
+            } finally {
+                btn.disabled = false;
+                const countKey = isSearchDialog ? 'main.search_download_selected' : 'main.download_selected';
+                btn.textContent = t(countKey, { count: selectedIndices.size });
+            }
+        });
+
+        // Ренер списка загрузок
+        const renderedTaskIds = new Set();
+
+        function renderDownloads(tasks) {
+            if (tasks.length === 0) {
+                emptyState.style.display = 'block';
+                downloadsList.innerHTML = '';
+                downloadsList.appendChild(emptyState);
+                renderedTaskIds.clear();
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            const html = tasks.map((task, index) => {
+                const isDownloading = task.status === 'downloading';
+                const isProcessing = task.status === 'processing';
+                const isError = task.status === 'error';
+                const isCompleted = task.status === 'completed';
+                const isPaused = task.status === 'paused';
+
+                const statusKey = task.detailed_status || task.status;
+                const statusText = t(`status.${statusKey}`);
+
+                let statusColor = 'text-primary';
+                if (isCompleted) statusColor = 'text-green-600 dark:text-green-400';
+                if (isError) statusColor = 'text-error';
+                if (isPaused) statusColor = 'text-secondary';
+
+                const showActions = showActionButtons(task.status);
+                const canOpenFile = isCompleted && task.file_path;
+
+                const isNew = !renderedTaskIds.has(task.id);
+                if (isNew) renderedTaskIds.add(task.id);
+
+                return `
         <div class="live-card bg-surface-container-low p-5 rounded-[2rem] flex flex-col sm:flex-row gap-5 ${isDownloading || isProcessing ? 'active' : ''} ${isCompleted ? 'opacity-75' : ''} ${isNew ? 'animate-reveal' : ''}" style="${isNew ? `--delay: ${index * 0.1}s` : ''}">
             <!-- Thumbnail with pulse effect if active -->
             <div class="relative shrink-0 flex items-center justify-center">
@@ -1408,84 +1686,84 @@ function renderDownloads(tasks) {
             </div>
         </div>
         `;
-    }).join('');
+            }).join('');
 
-    // To prevent layout shift when updating progress, 
-    // we only replace the entire list if the number of tasks changed 
-    // or if there's a new task.
-    // However, for simplicity and since it's a small list, 
-    // we'll just update it. The reveal animation is only added to NEW elements.
-    downloadsList.innerHTML = html;
-}
+            // To prevent layout shift when updating progress, 
+            // we only replace the entire list if the number of tasks changed 
+            // or if there's a new task.
+            // However, for simplicity and since it's a small list, 
+            // we'll just update it. The reveal animation is only added to NEW elements.
+            downloadsList.innerHTML = html;
+        }
 
-function getStatusText(status) {
-    const keyMap = {
-        'queued': 'status.queued',
-        'preparing': 'status.preparing',
-        'downloading': 'status.downloading',
-        'paused': 'status.paused',
-        'completed': 'status.completed',
-        'error': 'status.error',
-        'processing': 'status.preparing'
-    };
-    const key = keyMap[status];
-    return key ? t(key) : status;
-}
+        function getStatusText(status) {
+            const keyMap = {
+                'queued': 'status.queued',
+                'preparing': 'status.preparing',
+                'downloading': 'status.downloading',
+                'paused': 'status.paused',
+                'completed': 'status.completed',
+                'error': 'status.error',
+                'processing': 'status.preparing'
+            };
+            const key = keyMap[status];
+            return key ? t(key) : status;
+        }
 
-function getStatusColor(status) {
-    const map = {
-        'queued': 'text-secondary',
-        'preparing': 'text-tertiary',
-        'downloading': 'text-primary',
-        'paused': 'text-on-secondary-container',
-        'completed': 'text-tertiary',
-        'error': 'text-error',
-        'processing': 'text-tertiary'
-    };
-    return map[status] || 'text-secondary';
-}
+        function getStatusColor(status) {
+            const map = {
+                'queued': 'text-secondary',
+                'preparing': 'text-tertiary',
+                'downloading': 'text-primary',
+                'paused': 'text-on-secondary-container',
+                'completed': 'text-tertiary',
+                'error': 'text-error',
+                'processing': 'text-tertiary'
+            };
+            return map[status] || 'text-secondary';
+        }
 
-function getProgressBarColor(status) {
-    const map = {
-        'queued': 'bg-secondary',
-        'preparing': 'bg-tertiary',
-        'downloading': 'bg-primary',
-        'paused': 'bg-secondary',
-        'completed': 'bg-tertiary',
-        'error': 'bg-error',
-        'processing': 'bg-tertiary'
-    };
-    return map[status] || 'bg-secondary';
-}
+        function getProgressBarColor(status) {
+            const map = {
+                'queued': 'bg-secondary',
+                'preparing': 'bg-tertiary',
+                'downloading': 'bg-primary',
+                'paused': 'bg-secondary',
+                'completed': 'bg-tertiary',
+                'error': 'bg-error',
+                'processing': 'bg-tertiary'
+            };
+            return map[status] || 'bg-secondary';
+        }
 
-function showActionButtons(status) {
-    return ['downloading', 'paused'].includes(status);
-}
+        function showActionButtons(status) {
+            return ['downloading', 'paused'].includes(status);
+        }
 
-function formatBytes(bytes) {
-    if (!bytes || bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-}
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
-// Toast уведомления
-function showToast(message, title = '') {
-    const container = document.getElementById('toast-container');
+        // Toast уведомления
+        function showToast(message, title = '') {
+            const container = document.getElementById('toast-container');
 
-    const toast = document.createElement('div');
-    toast.className = 'bg-surface-container-low border border-outline-variant rounded-xl p-4 shadow-lg flex flex-col gap-2 animate-slide-in';
+            const toast = document.createElement('div');
+            toast.className = 'bg-surface-container-low border border-outline-variant rounded-xl p-4 shadow-lg flex flex-col gap-2 animate-slide-in';
 
-    const titleHtml = title ? `<p class="text-sm font-semibold text-on-surface truncate">${escapeHtml(title)}</p>` : '';
+            const titleHtml = title ? `<p class="text-sm font-semibold text-on-surface truncate">${escapeHtml(title)}</p>` : '';
 
-    toast.innerHTML = `
+            toast.innerHTML = `
         <div class="flex items-start gap-3">
             <span class="material-symbols-outlined text-amber-500 text-[22px] shrink-0 mt-0.5">warning</span>
             <div class="flex-1 min-w-0">
@@ -1498,211 +1776,212 @@ function showToast(message, title = '') {
         </div>
     `;
 
-    container.appendChild(toast);
+            container.appendChild(toast);
 
-    // Автоматическое удаление через 5 секунд
-    setTimeout(() => {
-        toast.classList.add('animate-slide-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 5000);
-}
-
-// Действия с загрузками
-window.removeTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}`, { method: 'DELETE' });
-    // Обновить список после удаления
-    try {
-        const response = await fetch(`${API_URL}/api/downloads`);
-        const tasks = await response.json();
-        renderDownloads(tasks);
-    } catch (err) {
-        console.error('Ошибка обновления списка:', err);
-    }
-}
-
-window.pauseTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}/pause`, { method: 'POST' });
-    // Обновить список после паузы
-    try {
-        const response = await fetch(`${API_URL}/api/downloads`);
-        const tasks = await response.json();
-        renderDownloads(tasks);
-    } catch (err) {
-        console.error('Ошибка обновления списка:', err);
-    }
-}
-
-window.resumeTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}/resume`, { method: 'POST' });
-    // Обновить список после возобновления
-    try {
-        const response = await fetch(`${API_URL}/api/downloads`);
-        const tasks = await response.json();
-        renderDownloads(tasks);
-    } catch (err) {
-        console.error('Ошибка обновления списка:', err);
-    }
-}
-
-window.cancelTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}/cancel`, { method: 'POST' });
-    // Обновить список после отмены
-    try {
-        const response = await fetch(`${API_URL}/api/downloads`);
-        const tasks = await response.json();
-        renderDownloads(tasks);
-    } catch (err) {
-        console.error('Ошибка обновления списка:', err);
-    }
-}
-
-async function getTaskById(id) {
-    try {
-        const response = await fetch(`${API_URL}/api/downloads`);
-        const tasks = await response.json();
-        return tasks.find(t => t.id === id);
-    } catch {
-        return null;
-    }
-}
-
-window.retryTask = async function(id) {
-    await fetch(`${API_URL}/api/download/${id}/retry`, { method: 'POST' });
-}
-
-window.copyUrlByTask = async function(id) {
-    const task = await getTaskById(id);
-    if (!task) return;
-    try {
-        await navigator.clipboard.writeText(task.url || '');
-        showToast(t('notifications.url_copied'));
-    } catch {}
-}
-
-window.openFolderByTask = async function(id) {
-    const task = await getTaskById(id);
-    const path = task?.file_path || '';
-    await fetch(`${API_URL}/api/open-folder`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path })
-    });
-}
-
-window.openFileByTask = async function(id) {
-    const task = await getTaskById(id);
-    const path = task?.file_path || '';
-    if (!path) return;
-    await fetch(`${API_URL}/api/open-file`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path })
-    });
-}
-
-window.copyLog = async function(id) {
-    try {
-        const res = await fetch(`${API_URL}/api/download/${id}/log`);
-        const data = await res.json();
-        if (data?.log) {
-            await navigator.clipboard.writeText(data.log);
-            showToast(t('notifications.log_copied'));
-        } else if (data?.error) {
-            showToast(data.error);
+            // Автоматическое удаление через 5 секунд
+            setTimeout(() => {
+                toast.classList.add('animate-slide-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
         }
-    } catch {
-        showToast('Log error');
-    }
-}
 
-window.openFolder = async function(id) {
-    await fetch(`${API_URL}/api/open-folder/${id}`, { method: 'POST' });
-}
+        // Действия с загрузками
+        window.removeTask = async function (id) {
+            await fetch(`${API_URL}/api/download/${id}`, { method: 'DELETE' });
+            // Обновить список после удаления
+            try {
+                const response = await fetch(`${API_URL}/api/downloads`);
+                const tasks = await response.json();
+                renderDownloads(tasks);
+            } catch (err) {
+                console.error('Ошибка обновления списка:', err);
+            }
+        }
 
-// Инициализация
-connectWebSocket();
+        window.pauseTask = async function (id) {
+            await fetch(`${API_URL}/api/download/${id}/pause`, { method: 'POST' });
+            // Обновить список после паузы
+            try {
+                const response = await fetch(`${API_URL}/api/downloads`);
+                const tasks = await response.json();
+                renderDownloads(tasks);
+            } catch (err) {
+                console.error('Ошибка обновления списка:', err);
+            }
+        }
 
-// Переключение темы
-let isDarkTheme = false;
+        window.resumeTask = async function (id) {
+            await fetch(`${API_URL}/api/download/${id}/resume`, { method: 'POST' });
+            // Обновить список после возобновления
+            try {
+                const response = await fetch(`${API_URL}/api/downloads`);
+                const tasks = await response.json();
+                renderDownloads(tasks);
+            } catch (err) {
+                console.error('Ошибка обновления списка:', err);
+            }
+        }
 
-document.getElementById('theme-toggle')?.addEventListener('click', async () => {
-    isDarkTheme = !isDarkTheme;
-    
-    if (isDarkTheme) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-        document.getElementById('theme-icon').textContent = 'light_mode';
-    } else {
-        document.documentElement.classList.add('light');
-        document.documentElement.classList.remove('dark');
-        document.getElementById('theme-icon').textContent = 'dark_mode';
-    }
-    
-    // Сохраняем настройку на сервере
-    try {
-        const response = await fetch(`${API_URL}/api/settings`);
-        const settings = await response.json();
-        settings.dark_theme = isDarkTheme;
-        
-        await fetch(`${API_URL}/api/settings`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ settings })
+        window.cancelTask = async function (id) {
+            await fetch(`${API_URL}/api/download/${id}/cancel`, { method: 'POST' });
+            // Обновить список после отмены
+            try {
+                const response = await fetch(`${API_URL}/api/downloads`);
+                const tasks = await response.json();
+                renderDownloads(tasks);
+            } catch (err) {
+                console.error('Ошибка обновления списка:', err);
+            }
+        }
+
+        async function getTaskById(id) {
+            try {
+                const response = await fetch(`${API_URL}/api/downloads`);
+                const tasks = await response.json();
+                return tasks.find(t => t.id === id);
+            } catch {
+                return null;
+            }
+        }
+
+        window.retryTask = async function (id) {
+            await fetch(`${API_URL}/api/download/${id}/retry`, { method: 'POST' });
+        }
+
+        window.copyUrlByTask = async function (id) {
+            const task = await getTaskById(id);
+            if (!task) return;
+            try {
+                await navigator.clipboard.writeText(task.url || '');
+                showToast(t('notifications.url_copied'));
+            } catch { }
+        }
+
+        window.openFolderByTask = async function (id) {
+            const task = await getTaskById(id);
+            const path = task?.file_path || '';
+            await fetch(`${API_URL}/api/open-folder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path })
+            });
+        }
+
+        window.openFileByTask = async function (id) {
+            const task = await getTaskById(id);
+            const path = task?.file_path || '';
+            if (!path) return;
+            await fetch(`${API_URL}/api/open-file`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path })
+            });
+        }
+
+        window.copyLog = async function (id) {
+            try {
+                const res = await fetch(`${API_URL}/api/download/${id}/log`);
+                const data = await res.json();
+                if (data?.log) {
+                    await navigator.clipboard.writeText(data.log);
+                    showToast(t('notifications.log_copied'));
+                } else if (data?.error) {
+                    showToast(data.error);
+                }
+            } catch {
+                showToast('Log error');
+            }
+        }
+
+        window.openFolder = async function (id) {
+            await fetch(`${API_URL}/api/open-folder/${id}`, { method: 'POST' });
+        }
+
+        // Инициализация
+        connectWebSocket();
+
+        // Переключение темы
+        let isDarkTheme = false;
+
+        document.getElementById('theme-toggle')?.addEventListener('click', async () => {
+            isDarkTheme = !isDarkTheme;
+
+            if (isDarkTheme) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                document.getElementById('theme-icon').textContent = 'light_mode';
+            } else {
+                document.documentElement.classList.add('light');
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').textContent = 'dark_mode';
+            }
+
+            // Сохраняем настройку на сервере
+            try {
+                const response = await fetch(`${API_URL}/api/settings`);
+                const settings = await response.json();
+                settings.dark_theme = isDarkTheme;
+
+                await fetch(`${API_URL}/api/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ settings })
+                });
+            } catch (err) {
+                console.error('Ошибка сохранения темы:', err);
+            }
         });
-    } catch (err) {
-        console.error('Ошибка сохранения темы:', err);
-    }
-});
 
-// Загрузка настроек и применение темы
-async function loadThemeSettings() {
-    try {
-        const response = await fetch(`${API_URL}/api/settings`);
-        const settings = await response.json();
-        
-        isDarkTheme = settings.dark_theme;
-        
-        if (isDarkTheme) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-            document.getElementById('theme-icon').textContent = 'light_mode';
-        } else {
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-            document.getElementById('theme-icon').textContent = 'dark_mode';
+        // Загрузка настроек и применение темы
+        async function loadThemeSettings() {
+            try {
+                const response = await fetch(`${API_URL}/api/settings`);
+                const settings = await response.json();
+
+                isDarkTheme = settings.dark_theme;
+
+                if (isDarkTheme) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                    document.getElementById('theme-icon').textContent = 'light_mode';
+                } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                    document.getElementById('theme-icon').textContent = 'dark_mode';
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки настроек темы:', err);
+            }
         }
-    } catch (err) {
-        console.error('Ошибка загрузки настроек темы:', err);
-    }
-}
 
-// Загрузка начального состояния
-async function loadInitialData() {
-    try {
-        const [downloadsRes, statusRes] = await Promise.all([
-            fetch(`${API_URL}/api/downloads`),
-            fetch(`${API_URL}/api/status`)
-        ]);
+        // Загрузка начального состояния
+        async function loadInitialData() {
+            try {
+                const [downloadsRes, statusRes] = await Promise.all([
+                    fetch(`${API_URL}/api/downloads`),
+                    fetch(`${API_URL}/api/status`)
+                ]);
 
-        const downloads = await downloadsRes.json();
-        const status = await statusRes.json();
+                const downloads = await downloadsRes.json();
+                const status = await statusRes.json();
 
-        renderDownloads(downloads);
-        activeCount.textContent = `${status.active_downloads} items`;
-    } catch (err) {
-        console.error('Ошибка загрузки данных:', err);
-    }
-}
+                renderDownloads(downloads);
+                activeCount.textContent = `${status.active_downloads} items`;
+            } catch (err) {
+                console.error('Ошибка загрузки данных:', err);
+            }
+        }
 
-loadThemeSettings();
-loadInitialData();
+        loadThemeSettings();
+        loadInitialData();
 
-// Закрытие приложения
-document.getElementById('close-app')?.addEventListener('click', () => {
-    if (window.pywebview && window.pywebview.api) {
-        window.pywebview.api.close();
-    }
-});
-</script>
+        // Закрытие приложения
+        document.getElementById('close-app')?.addEventListener('click', () => {
+            if (window.pywebview && window.pywebview.api) {
+                window.pywebview.api.close();
+            }
+        });
+    </script>
 </body>
+
 </html>
